@@ -1,0 +1,239 @@
+.containerLogin {
+    display: flex;
+    width: 80%;
+    height: 500px;
+    margin: 5%;
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    flex-direction: row;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+
+
+
+
+
+footer {
+    width: 100%;
+}
+
+
+.iconos {
+    margin: 0%;
+    padding: 4px;
+}
+
+
+.image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(../assets/imageLogin.jpg);
+    background-size: cover;
+    background-position: center;
+    width: 45%;
+    color: white;
+    height: 500px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+
+.form {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    font-size: 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 55%;
+    color: white;
+    height: 500px;
+}
+
+.form .q-btn {
+    background-color: #adb5bd !important;
+    color: black !important;
+    box-shadow: 0 0 10px 0 rgba(255, 253, 253, 0.897);
+
+}
+
+
+
+/* From Uiverse.io by Yaya12085 */
+button {
+    max-width: 320px;
+    display: flex;
+    padding: 0.5rem 1.4rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    gap: 0.75rem;
+    color: rgb(65, 63, 63);
+    background-color: #fff;
+    cursor: pointer;
+    transition: all .6s ease;
+}
+
+.button svg {
+    height: 24px;
+}
+
+button:hover {
+    transform: scale(1.02);
+}
+
+
+
+/* From Uiverse.io by ozgeozkaraa01 */
+.group {
+    display: flex;
+    line-height: 30px;
+    align-items: center;
+    position: relative;
+    max-width: 200px;
+}
+
+.input {
+    width: 100%;
+    height: 45px;
+    line-height: 30px;
+    padding: 0 5rem;
+    padding-left: 3rem;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    outline: none;
+    background-color: #f8fafc;
+    color: #0d0c22;
+    transition: .5s ease;
+}
+
+.input::placeholder {
+    color: #94a3b8;
+}
+
+.input:focus,
+input:hover {
+    outline: none;
+    border-color: rgba(129, 140, 248);
+    background-color: #fff;
+    box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
+}
+
+.icon {
+    position: absolute;
+    left: 1rem;
+    fill: none;
+    width: 1rem;
+    height: 1rem;
+}
+
+
+
+/* From Uiverse.io by anniekoop */
+.input {
+    font-family: "SF Pro";
+    max-width: 190px;
+    padding: 0.875rem;
+    font-size: 1rem;
+    border: 1.5px solid #000;
+    border-radius: 0.5rem;
+    box-shadow: 2.5px 3px 0 #000;
+    outline: none;
+    transition: ease 0.25s;
+}
+
+.input:focus {
+    box-shadow: 5.5px 7px 0 black;
+}
+
+
+/* From Uiverse.io by liyaxu123 */
+.form-control {
+    position: relative;
+    margin: 20px 0 40px;
+    width: 190px;
+}
+
+.form-control input {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 2px #fff solid;
+    display: block;
+    width: 100%;
+    padding: 15px 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+.form-control input:focus,
+.form-control input:valid {
+    outline: 0;
+    border-bottom-color: lightblue;
+}
+
+.form-control label {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    pointer-events: none;
+}
+
+.form-control label span {
+    display: inline-block;
+    font-size: 18px;
+    min-width: 5px;
+    color: #fff;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.form-control input:focus+label span,
+.form-control input:valid+label span {
+    color: lightblue;
+    transform: translateY(-30px);
+}
+
+
+@media(max-width:860px) {
+
+    .containerLogin {
+        background-image: url(../assets/imageLogin.jpg) !important;
+        background-repeat: no-repeat;
+        text-align: center;
+        text-shadow: 2px 2px 2px black;
+        background-size: cover;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image {
+        display: none;
+    }
+
+    .form {
+        width: 100%;
+    }
+
+    .button {
+        min-width: 200px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 10px;
+    }
+
+}
