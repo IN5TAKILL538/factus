@@ -1,15 +1,17 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
 
-export const useStore = defineStore ("tienda",()=>{
-    
-    let prueba = ref("csasd")
-
-
-
-
-    return{
-        prueba
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    token: sessionStorage.getItem('authToken') || null,
+  }),
+  actions: {
+    setToken(token) {
+      this.token = token;
+      sessionStorage.setItem('authToken', token);
+    },
+    logout() {
+      this.token = null;
+      sessionStorage.removeItem('authToken');
     }
-
-})
+  }
+});
