@@ -128,6 +128,6 @@ const login = async () => {
 
 
 </script>
-<style scoped>
+<style>
 @import "../styles/login.css";
 </style>
