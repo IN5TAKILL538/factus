@@ -1,24 +1,27 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import home from "../views/home.vue"
-import loginview from '../views/login.vue'
-import verfacturas from "../views/verfacturas.vue"
-import { useAuthStore } from "../store/store";  
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/home.vue';
+import LoginView from '../views/login.vue';
+import { useAuthStore } from '../store/store.js';
 
-const routes =[
-    {path: "/" , name: 'login', component : loginview},
-    {path:"/home", component : home, children:[
-    {path:"/verfacturas", component:verfacturas},
-    //{path:"/crearfacturas", component:crearfacturas},
-]}
-]
-
-
-
-
+const routes = [
+  { path: '/home', name: 'home', component: Home,  },
+  { path: '/', name: 'login', component: LoginView },
+  
+];
 
 const router = createRouter({
-    history:createWebHashHistory(),
-    routes
-}); 
+  history: createWebHistory(),
+  routes
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  if (to.meta.requiresAuth && !authStore.token) {
+    next({ name: 'login' });  
+  } else {
+    next();
+  }
+});
 
 export default router;

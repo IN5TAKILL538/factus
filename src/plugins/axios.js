@@ -1,22 +1,22 @@
 import axios from 'axios';
 
-const instance = axios.create({
+const apiCliente= axios.create({
   baseURL: 'https://api-sandbox.factus.com.co',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor de solicitud
-instance.interceptors.request.use(
+
+apiCliente.interceptors.request.use(
   config => {
     
-    // Obtener el token del sessionStorage
+
     const token = sessionStorage.getItem('authToken');
     if (token) {
       
-      // Agregar el token Bearer a los encabezados de la solicitud
-      config.headers.Authorization = `Bearer ${token}`;
+
+      config.headers.Authorization =`Bearer ${token}`;
     }
     return config;
   },
@@ -27,7 +27,7 @@ instance.interceptors.request.use(
 );
 
 // Interceptor de respuesta
-instance.interceptors.response.use(
+apiCliente.interceptors.response.use(
   response => {
     return response;
   },
@@ -38,4 +38,4 @@ instance.interceptors.response.use(
   }
 );
 
-export default instance;
+export default apiCliente;

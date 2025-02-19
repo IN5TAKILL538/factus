@@ -1,11 +1,15 @@
-<script></script>
-
 <template>
- <div>
-  <router-view></router-view>
- </div>
-</template>
-
-<style>
-@import './styles/login.css'
-</style>
+    <div>
+      <router-view></router-view>  <!-- Este es el contenedor para las vistas que cambian -->
+    </div>
+  </template>
+  
+  <script setup>
+  // No necesitas importar nada aquí relacionado con el router
+  </script>
+  
+  <style scoped>
+ body{
+  height: 100vh;
+ }
+  </style>
