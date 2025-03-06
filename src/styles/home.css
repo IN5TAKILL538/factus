@@ -1,0 +1,15 @@
+
+.padre{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 800px;
+    height: 500px;
+    
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    flex-direction: row;
+    background: linear-gradient(45deg, #1d8fec, #000000);
+    font-family: Georgia, "Times New Roman", Times, serif;
+}

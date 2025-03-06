@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiCliente= axios.create({
-  baseURL: 'https://api-sandbox.factus.com.co',
+  baseURL: 'https://backfactus.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -20,7 +20,7 @@
          <div class="q-pa-md">
             
             <span v-if="!loading"><q-btn color="teal" type="submit" label="Iniciar sesion" /></span>
-            <div v-if="loading" class="spinner"></div>
+            <div v-if="loading" class="spinner" label="Iniciar sesion"></div>
          </div>
 
       </form>
