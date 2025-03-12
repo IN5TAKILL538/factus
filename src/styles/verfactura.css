@@ -17,4 +17,15 @@
     align-items: center;
     display: flex;
     width: 100%;
+    flex-direction: column;
+}
+.buttonCreateFacturas{
+    background: #1d8fec;
+    margin: 20px;
+}
+.txtFacturas{
+    display: flex;
+    justify-content: left;
+    text-align: left;
+    width: 90%;
 }

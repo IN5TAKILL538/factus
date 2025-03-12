@@ -21,7 +21,10 @@
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" behavior="desktop">
       <div class="menuLink">
-         <button class="buttonLink"><router-link to="/verfacturas"><span>Facturas</span></router-link></button>
+         <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Facturas</span></router-link></button>
+         <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Clientes</span></router-link></button>
+         <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Productos</span></router-link></button>
+         
       
       </div>
     
@@ -32,12 +35,7 @@
       <!-- drawer content -->
     </q-drawer>
 
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" behavior="desktop">
-      <div class="menuLink">
-         <button class="buttonLink"><router-link to="/verfacturas"><span>Facturas</span></router-link></button>
-      
-      </div>
-    </q-drawer>
+   
 
     <q-page-container>
       <router-view />
@@ -79,6 +77,29 @@
     }
   }
   </script>
-  <style>
-
+  
+  <style scoped>
+.menuLink{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+.buttonLink{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  background: #1d8fec;
+  padding: 20px;
+  margin: 20px;
+  
+}
+.textButtonLink{
+  color: #f2f2f2;
+}
 </style>

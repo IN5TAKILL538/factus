@@ -1,4 +1,6 @@
-<template>  <div class="containerTabla">
+<template>  
+
+<div class="containerTabla"><div class="txtFacturas"><button class="buttonCreateFacturas">Crear Factura</button></div>
   <q-table title="Facturas" :rows="rows" :columns="columns" row-key="name" class="tabla">
    
     
@@ -71,10 +73,11 @@
     
   ]
   
+  
   export default {
     setup () {
       return {
-        visibleColumns: ref([ 'numero', 'cliente', 'codigoreferencia', 'identificacion', 'nombre', 'correoElectronico', 'total' ]),
+        
         columns,
         rows
       }
