@@ -13,15 +13,22 @@
           Title
         </q-toolbar-title>
 
-        <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
+       
       </q-toolbar>
 
       
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" behavior="desktop">
+    <q-drawer 
+  show-if-above 
+  v-model="leftDrawerOpen" 
+  side="left" 
+  behavior="desktop"
+  class="no-scroll"
+>
       <div class="menuLink">
-         <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Facturas</span></router-link></button>
+        <div><h1 class="titletext">APPTURA</h1></div>
+         <button class="buttonLink" ><router-link to="/verfacturas"><span class="textButtonLink">Facturas</span></router-link></button>
          <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Clientes</span></router-link></button>
          <button class="buttonLink" @click="menuOff()"><router-link to="/verfacturas"><span class="textButtonLink">Productos</span></router-link></button>
          
@@ -97,9 +104,18 @@
   background: #1d8fec;
   padding: 20px;
   margin: 20px;
+  width: 80%;
   
 }
 .textButtonLink{
-  color: #f2f2f2;
+  color: #ffffff;
+ 
+}
+.titletext{
+  font-size: 40px;
+  color: #000;
+}
+.no-scroll {
+  overflow: hidden;
 }
 </style>
