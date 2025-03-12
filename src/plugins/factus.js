@@ -1,4 +1,5 @@
-const apiCliente= axios.create({
+import axios from 'axios'
+const apiCliente2= axios.create({
     baseURL: 'https://api-sandbox.factus.com.co',
     headers: {
       'Content-Type': 'application/json',
@@ -7,7 +8,7 @@ const apiCliente= axios.create({
   });
   
   
-  apiCliente.interceptors.request.use(
+  apiCliente2.interceptors.request.use(
     config => {
       
   
@@ -26,7 +27,7 @@ const apiCliente= axios.create({
   );
   
   // Interceptor de respuesta
-  apiCliente.interceptors.response.use(
+  apiCliente2.interceptors.response.use(
     response => {
       return response;
     },
@@ -37,4 +38,4 @@ const apiCliente= axios.create({
     }
   );
   
-  export default apiCliente;
+  export default apiCliente2;

@@ -34,7 +34,10 @@ import Swal from 'sweetalert2'
 
 import { ref } from 'vue';
 
-import axios from '../plugins/axios.js';
+import factus from '../plugins/factus.js';
+//import axios from '../plugins/axios.js';
+
+
 import { useRouter } from 'vue-router';
 
 
@@ -46,7 +49,7 @@ const loading = ref(false);
 const login = async () => {
    loading.value = true;
    try {
-      const response = await axios.post('/oauth/token', {
+      const response = await factus.post('/oauth/token', {
          username: username.value,
          password: password.value,
          grant_type: 'password',
