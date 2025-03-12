@@ -2,6 +2,7 @@ const apiCliente= axios.create({
     baseURL: 'https://api-sandbox.factus.com.co',
     headers: {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
   });
   
