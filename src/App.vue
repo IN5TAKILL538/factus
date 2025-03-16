@@ -9,7 +9,5 @@
   </script>
   
   <style scoped>
- body{
-  height: 100vh;
- }
+
   </style>

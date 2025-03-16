@@ -22,9 +22,9 @@
       class="no-scroll"
     >
       <div class="menuLink">
-        <div><h1 class="titletext">APPTURA</h1></div>
+        <div class="titletext"><h1 class="titletext">APPTURA</h1></div>
         <button class="buttonLink" @click="menuOff()">
-          <router-link to="/verfacturas"
+          <router-link to="/facturas"
             ><span class="textButtonLink">Facturas</span></router-link
           >
         </button>
@@ -62,7 +62,9 @@
   
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router"; // <-- Agrega esta línea
 
+const router = useRouter(); // <-- Instancia el router aquí
 const leftDrawerOpen = ref(true);
 const rightDrawerOpen = ref(true);
 
@@ -82,6 +84,9 @@ const store = useAuthStore();
 onMounted(() => {
   console.log("Token guardado en store:", store.token);
   console.log("Token guardado en localStorage:", localStorage.getItem("token"));
+  if (router.currentRoute.value.path === "/") {
+    router.push("/verfacturas");
+  }
 });
 const menuOff = () => {
   leftDrawerOpen.value = false;
@@ -89,34 +94,5 @@ const menuOff = () => {
 </script>
   
   <style scoped>
-.menuLink {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f2f2f2;
-  padding: 20px;
-}
-.buttonLink {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  background: #1d8fec;
-  padding: 20px;
-  margin: 20px;
-  width: 80%;
-}
-.textButtonLink {
-  color: #ffffff;
-}
-.titletext {
-  font-size: 40px;
-  color: #000;
-}
-.no-scroll {
-  overflow: hidden;
-}
+@import "../styles/home.css";
 </style>

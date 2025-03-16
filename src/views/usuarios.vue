@@ -192,8 +192,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { postData, getData, putData } from '../plugins/axios.js'
-import apiCliente from "../plugins/factus.js"
+import { postData, getData } from '../plugins/axios.js';
+import apiCliente from "../plugins/factus"
 // Quasar notification
 const $q = useQuasar();
 
@@ -340,7 +340,7 @@ function filterMunicipalities(val, update) {
 // Fetch users from API
 async function fetchUsers() {
   try {
-    const response = await getData('/api/usuariosr');
+    const response = await getData('/api/usuarios');
     users.value = response;
   } catch (error) {
     $q.notify({
@@ -392,14 +392,14 @@ async function submitUser() {
   try {
     if (isEditing.value) {
       // Update existing user
-      await postData(`/api/usuariosr/${currentUserId.value}`, user.value);
+      await postData(`/api/usuarios/${currentUserId.value}`, user.value);
       $q.notify({
         type: 'positive',
         message: 'Usuario actualizado correctamente'
       });
     } else {
       // Create new user
-      await postData('/api/usuariosr', user.value);
+      await postData('/api/usuarios', user.value);
       $q.notify({
         type: 'positive',
         message: 'Usuario creado correctamente'
@@ -420,7 +420,7 @@ async function submitUser() {
 // Delete user
 async function deleteUser(id) {
   try {
-    await postData(`/api/usuariosr/${id}/delete`, {});
+    await postData(`/api/usuarios/${id}/delete`, {});
     $q.notify({
       type: 'positive',
       message: 'Usuario eliminado correctamente'
@@ -436,8 +436,5 @@ async function deleteUser(id) {
 </script>
 
 <style scoped>
-.q-card {
-  max-height: 90vh;
-  overflow-y: auto;
-}
+
 </style>

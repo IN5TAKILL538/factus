@@ -200,7 +200,7 @@ const tributeOptions = ref([])
 // Cargar productos al montar el componente
 onMounted(async () => {
   try {
-    const response = await getData('/api/productosr')
+    const response = await getData('/api/servicios')
     products.value = response
     
     // Cargar datos iniciales para los selects
@@ -332,7 +332,7 @@ function editProduct(selectedProduct) {
 // Eliminar producto
 async function deleteProduct(id) {
   try {
-    await apiCliente.delete(`/api/productosr/${id}`)
+    await apiCliente.delete(`/api/servicios/${id}`)
     
     // Eliminar de la lista local
     products.value = products.value.filter(p => p._id !== id)
@@ -420,7 +420,5 @@ async function submitProduct() {
 </script>
 
 <style scoped>
-.q-table {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+
 </style>

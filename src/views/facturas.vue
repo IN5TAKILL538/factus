@@ -428,7 +428,7 @@ const hideLoading = () => {
 const store = useAuthStore();
 
 // Control de visualización de facturas API
-const showApiInvoices = ref(false);
+const showApiInvoices = ref(true);
 // Control para el estado de validación de la factura
 const isInvoiceValidated = ref(false);
 
@@ -516,8 +516,10 @@ const productOptions = computed(() => {
 // Cargar datos al montar el componente
 onMounted(async () => {
   try {
-    users.value = await getData("/api/usuariosr");
-    products.value = await getData("/api/productosr");
+    const apiInvoices = ref([]); // Siempre debe iniciar como array
+const localInvoices = ref([]); // Igual
+    users.value = await getData("/api/clientes");
+    products.value = await getData("/api/servicios");
     
     // Cargar facturas existentes
     await dataFacturas();
@@ -542,7 +544,7 @@ const formatDate = (dateString) => {
 
 const loadLocalInvoices = async () => {
   try {
-    const localData = await getData("/api/facturar");
+    const localData = await getData("/api/facturas");
     localInvoices.value = localData.map(invoice => ({
       ...invoice,
       isLocal: true
@@ -789,7 +791,7 @@ const createInvoice = async () => {
     };
 
     console.log("Enviando a API local:", JSON.stringify(invoiceData, null, 2));
-    const response = await postData("/api/facturar/local", invoiceData);
+    const response = await postData("/api/facturas/local", invoiceData);
     
     showNotification('positive', 'Factura guardada con éxito');
     
