@@ -29,108 +29,67 @@
 
 </template>
 <script setup>
+import Swal from "sweetalert2";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../store/store.js"; // ✅ Importar Pinia
+import factus from "../plugins/factus.js";
 
-import Swal from 'sweetalert2'
-
-import { ref } from 'vue';
-
-import factus from '../plugins/factus.js';
-//import axios from '../plugins/axios.js';
-
-
-import { useRouter } from 'vue-router';
-
-
-
-const username = ref('');
-const password = ref('');
+const username = ref("");
+const password = ref("");
 const router = useRouter();
 const loading = ref(false);
+const authStore = useAuthStore(); // ✅ Instancia del store
+
 const login = async () => {
-   loading.value = true;
-   try {
-      const response = await factus.post('/oauth/token', {
-         username: username.value,
-         password: password.value,
-         grant_type: 'password',
-         client_id: "9e2e16a0-2ea3-48e7-ab85-8a01962a40d3",
-         client_secret: "lWt72OqfNQplSulRXJQOCShBkkzdgRn5cihbmZsr",
-      });
-      console.log('Iniciado sesión con éxito:', response.data);
-      let timerInterval;
+  loading.value = true;
+  try {
+    const response = await factus.post("/oauth/token", {
+      username: username.value,
+      password: password.value,
+      grant_type: "password",
+      client_id: "9e2e16a0-2ea3-48e7-ab85-8a01962a40d3",
+      client_secret: "lWt72OqfNQplSulRXJQOCShBkkzdgRn5cihbmZsr",
+    });
 
-      Swal.fire({
-         title: "Sesión Iniciada",
-         icon: "success",
-        
-         timer: 2000,
-         didOpen: () => {
-            Swal.showLoading();
-            const timer = Swal.getPopup().querySelector("b");
+    console.log("✅ Iniciado sesión con éxito:", response.data);
 
-            if (timer) {  // Asegura que el elemento <b> existe
-               timerInterval = setInterval(() => {
-                  timer.textContent = `${Swal.getTimerLeft()}`;
-               }, 100);
-            }
-         },
-         willClose: () => {
-            clearInterval(timerInterval);
-         }
-      }).then((result) => {
-         if (result.dismiss === Swal.DismissReason.timer) {
-            console.log("I was closed by the timer");
-         }
-      });
+    // ✅ Guardar token en Pinia y localStorage
+    authStore.set_Token_RefreshToken(response.data.access_token, response.data.refresh_token);
 
+    Swal.fire({
+      title: "Sesión Iniciada",
+      icon: "success",
+      timer: 2000,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
-      sessionStorage.setItem('authToken', response.data.access_token);
-      // Redirige al usuario a la página principal
-      router.push('/home');
-   } catch (error) {
+    // ✅ Guardar también en sessionStorage por seguridad
+    sessionStorage.setItem("authToken", response.data.access_token);
 
-      loading.value = false;
-      console.log("error inicio sesion", error)
-      let timerInterval;
-      Swal.fire({
-         icon: "error",
-         title: "Oops...",
-         text: "Credenciales incorrectas",
-         timer: 2000,
-         didOpen: () => {
-            Swal.showLoading();
-            const timer = Swal.getPopup().querySelector("b");
+    // ✅ Redirigir a home
+    router.push("/home");
+  } catch (error) {
+    loading.value = false;
+    console.log("❌ Error en inicio de sesión:", error);
 
-            if (timer) {  // Asegura que el elemento <b> existe
-               timerInterval = setInterval(() => {
-                  timer.textContent = `${Swal.getTimerLeft()}`;
-               }, 100);
-            }
-         },
-         willClose: () => {
-            clearInterval(timerInterval);
-         }
-      }).then((result) => {
-         if (result.dismiss === Swal.DismissReason.timer) {
-            console.log("I was closed by the timer");
-         }
-      });
-
-   }
-   finally {
-
-      loading.value = false;
-   }
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Credenciales incorrectas",
+      timer: 2000,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } finally {
+    loading.value = false;
+  }
 };
-
-
-
-
-
-
-
-
 </script>
+
 <style>
 @import "../styles/login.css";
 </style>

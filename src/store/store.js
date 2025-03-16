@@ -1,29 +1,25 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useAuthStore = defineStore ("administrador",()=>{
+export const useAuthStore = defineStore("administrador", () => {
+    const token = ref(localStorage.getItem("token") || "");
+    const refreshToken = ref(localStorage.getItem("refreshToken") || "");
 
-const token = ref("");
-const refreshToken = ref("");
-
-    function set_Token_RefreshToken (Token,RefreshToken){
-        if(token){
-            token.value= Token
-            refreshToken.value= RefreshToken
-        }
-        else{
-            console.log("no-token no-refreshToken");
+    function set_Token_RefreshToken(Token, RefreshToken) {
+        console.log("Intentando guardar token:", Token, RefreshToken);
+        if (Token) {
+            token.value = Token;
+            refreshToken.value = RefreshToken;
+            localStorage.setItem("token", Token);
+            localStorage.setItem("refreshToken", RefreshToken);
+        } else {
+            console.log("No hay token ni refreshToken para guardar");
         }
     }
 
-
-
-    return{
+    return {
         token,
         refreshToken,
-        set_Token_RefreshToken
-    }
-
-},{
-   persist:true
-})
+        set_Token_RefreshToken,
+    };
+}, { persist: true });
