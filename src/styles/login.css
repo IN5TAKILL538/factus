@@ -1,3 +1,12 @@
+#app{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
 .containerLogin {
     display: flex;
     flex-direction: row;
@@ -5,12 +14,14 @@
     width: 800px;
     height: 500px;
     
-    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    
     border-radius: 50px;
     flex-direction: row;
     background: linear-gradient(45deg, #1d8fec, #000000);
     font-family: Georgia, "Times New Roman", Times, serif;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
 }
 #forma1{
     display: flex;
@@ -29,7 +40,8 @@ body{
     flex-direction: row;
     flex-wrap: nowrap;
     background: linear-gradient(45deg, #1d8fec, #000000);
-    height: 100%;
+    height: 100vh;
+    width: 100%;
 }
 
 

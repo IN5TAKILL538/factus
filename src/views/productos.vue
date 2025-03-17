@@ -1,15 +1,21 @@
 <template>
-  <div class="q-pa-md">
-    <q-btn color="primary" label="Crear Producto" @click="openProductModal" />
+  <div class="q-pa-md" id="contenedorProductos">
+    
 
     <!-- Tabla de Productos -->
     <q-table
-      title="Productos"
+    style="width: 1000px;"
+      
       :rows="products"
       :columns="columns"
       row-key="_id"
       class="q-mt-md"
+      separator="cell"
+      :loading="loading"
     >
+    <template v-slot:top>
+      <div class="contenedorCabeza">  <div class="text-h6">Listado de Facturas</div><div id="btnCrearProductos"><q-btn color="primary" label="Crear Producto" @click="openProductModal" class="btn-primary"/></div></div>
+      </template>
       <!-- Acciones personalizadas -->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -19,6 +25,7 @@
             dense 
             color="primary" 
             @click="editProduct(props.row)"
+            class="q-mr-xs"
           />
           <q-btn 
             icon="delete" 
@@ -26,6 +33,7 @@
             dense 
             color="negative" 
             @click="deleteProduct(props.row._id)"
+            class="q-mr-xs"
           />
         </q-td>
       </template>
@@ -417,8 +425,72 @@ async function submitProduct() {
     console.error('Error al guardar producto:', error)
   }
 }
+const notification = ref({
+  show: false,
+  type: 'positive', // positive, negative, loading
+  message: ''
+});
+// Funciones de notificación personalizadas
+const showNotification = (type, message) => {
+  notification.value = {
+    show: true,
+    type,
+    message
+  };
+  
+  // Auto-ocultar para notificaciones no de carga
+  if (type !== 'loading') {
+    setTimeout(() => {
+      hideNotification();
+    }, 3000);
+  }
+};
+
+const hideNotification = () => {
+  notification.value.show = false;
+};
 </script>
 
 <style scoped>
 
+
+
+#contenedorProductos{
+  margin-top: 100px;
+  width: 100%;
+}
+#btnCrearProductos{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  
+}
+.btn-primary{
+  justify-content: center;
+}
+.text-h6{
+  
+  text-align: center;
+ 
+}
+#opcionesUsuarios{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+div.q-page-container{
+  width: 100%;
+
+}
+.q-mr-xs{
+  width: 50px;
+}
+.contenedorCabeza{
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  width: 100%;
+
+}
 </style>

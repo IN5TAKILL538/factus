@@ -7,9 +7,9 @@
 
         <q-toolbar-title>
           <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+            <img src="../assets/logo.jpeg" />
           </q-avatar>
-          Title
+          APPTURA
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -22,7 +22,7 @@
       class="no-scroll"
     >
       <div class="menuLink">
-        <div class="titletext"><h1 class="titletext">APPTURA</h1></div>
+        <div><h1 class="titletext">APPtura</h1></div>
         <button class="buttonLink" @click="menuOff()">
           <router-link to="/facturas"
             ><span class="textButtonLink">Facturas</span></router-link
@@ -48,14 +48,7 @@
     </q-page-container>
 
     <q-footer class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
-          <div>Title</div>
-        </q-toolbar-title>
-      </q-toolbar>
+  
     </q-footer>
   </q-layout>
 </template>

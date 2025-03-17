@@ -1,25 +1,37 @@
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="container mx-auto px-4 py-6" id="contenedorUsuarios">
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
-      <div class="p-4 bg-gray-50 flex justify-between items-center border-b">
-        <h2 class="text-xl font-semibold text-gray-800">Gestión de Usuarios</h2>
-        <q-btn 
-          color="primary" 
-          label="Crear Nuevo Usuario" 
-          @click="openUserModal" 
-          class="btn-primary"
-        />
-      </div>
+      
 
       <!-- User Table -->
       <q-table
+      style="width: 1000px;"
+      flat 
+      bordered 
         :rows="users"
         :columns="columns"
         row-key="_id"
         class="w-full"
+        separator="cell"
+        :loading="loading"
+        
       >
+      <template v-slot:top>
+        <div class="contenedorCabeza"><div class="text-h6">Listado de Usuarios</div><div class="p-4 bg-gray-50 flex justify-between items-center border-b" id="btnCrearUsuario"></div>
+        
+        <q-btn 
+          color="primary" 
+          label="Usuario" 
+          @click="openUserModal" 
+          class="btn-primary"
+          icon="add"
+          
+
+        />
+      </div>
+      </template>
         <template v-slot:body-cell-actions="props">
-          <q-td :props="props" class="text-center">
+          <q-td :props="props" class="text-center" id="opcionesUsuarios">
             <div class="flex justify-center space-x-2">
               <q-btn 
                 icon="edit" 
@@ -27,7 +39,7 @@
                 dense 
                 color="primary" 
                 @click="editUser(props.row)"
-                class="hover:bg-blue-100 rounded"
+                class="q-mr-xs"
               />
               <q-btn 
                 icon="delete" 
@@ -35,7 +47,7 @@
                 dense 
                 color="negative" 
                 @click="deleteUser(props.row._id)"
-                class="hover:bg-red-100 rounded"
+                class="q-mr-xs"
               />
             </div>
           </q-td>
@@ -198,6 +210,7 @@ import apiCliente from "../plugins/factus"
 const $q = useQuasar();
 
 // Columns for q-table
+const loading = ref(false);
 const columns = [
   { 
     name: 'identification', 
@@ -340,13 +353,14 @@ function filterMunicipalities(val, update) {
 // Fetch users from API
 async function fetchUsers() {
   try {
+    loading.value = true;
     const response = await getData('/api/usuarios');
     users.value = response;
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: 'No se pudieron cargar los usuarios'
-    });
+    console.error("Error al cargar Usuarios:", error);
+    showNotification('negative', 'Error al cargar Usuarios');
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -433,8 +447,70 @@ async function deleteUser(id) {
     });
   }
 }
+const notification = ref({
+  show: false,
+  type: 'positive', // positive, negative, loading
+  message: ''
+});
+// Funciones de notificación personalizadas
+const showNotification = (type, message) => {
+  notification.value = {
+    show: true,
+    type,
+    message
+  };
+  
+  // Auto-ocultar para notificaciones no de carga
+  if (type !== 'loading') {
+    setTimeout(() => {
+      hideNotification();
+    }, 3000);
+  }
+};
+
+const hideNotification = () => {
+  notification.value.show = false;
+};
 </script>
 
 <style scoped>
+#contenedorUsuarios{
+  margin-top: 100px;
+  width: 100%;
+}
+#btnCrearUsuario{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  padding: 10px;
+  
+}
+.btn-primary{
+  justify-content: center;
+}
+.text-h6{
+  
+  text-align: center;
+  
+}
+#opcionesUsuarios{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+div.q-page-container{
+  width: 100%;
 
+}
+.q-mr-xs{
+  width: 50px;
+}
+.contenedorCabeza{
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  width: 100%;
+
+}
 </style>

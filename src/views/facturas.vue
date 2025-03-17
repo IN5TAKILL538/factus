@@ -1,26 +1,27 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-mb-md row justify-between items-center">
-      <q-btn color="primary" label="Crear Nueva Factura" @click="openCreateModal" />
-      <div>
-        <q-btn :color="showApiInvoices ? 'primary' : 'grey'" 
-               :label="showApiInvoices ? 'Ver Solo Facturas Locales' : 'Ver Facturas Validadas'" 
-               @click="toggleApiInvoices" 
-               class="q-ml-sm" />
-        <q-btn color="secondary" label="Actualizar" @click="dataFacturas" class="q-ml-sm" icon="refresh" />
-      </div>
-    </div>
+  <div class="q-pa-md" id="contenedorFactura">
+
     
     <q-table 
+      style="width: 1000px;"
       flat 
       bordered 
       :rows="filteredInvoices" 
       :columns="columns" 
       row-key="_id"
       :loading="loading"
+      
+      
+
     >
       <template v-slot:top>
-        <div class="text-h6">Listado de Facturas</div>
+        <div class="contenedorCabeza"><div class="text-h6">Listado de Facturas</div>     
+      <q-btn color="primary" label="Factura" @click="openCreateModal" class="q-ml-sm" icon="add"/>
+     
+      
+        <q-btn  color="primary" label="Actualizar" @click="dataFacturas" class="q-ml-sm" icon="refresh" />
+      
+    </div>
       </template>
       
       <template v-slot:body-cell-total="props">
@@ -29,8 +30,8 @@
         </q-td>
       </template>
 
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
+      <template  v-slot:body-cell-actions="props" >
+        <q-td :props="props" id="opcionesFactura">
           <q-btn 
             icon="visibility" 
             flat 
@@ -52,6 +53,7 @@
             flat 
             color="accent" 
             @click="openInvoiceInBrowser(props.row)"
+            class="q-mr-xs"
           />
         </q-td>
       </template>
@@ -518,7 +520,7 @@ onMounted(async () => {
   try {
     const apiInvoices = ref([]); // Siempre debe iniciar como array
 const localInvoices = ref([]); // Igual
-    users.value = await getData("/api/clientes");
+    users.value = await getData("/api/usuarios");
     products.value = await getData("/api/servicios");
     
     // Cargar facturas existentes
@@ -600,8 +602,7 @@ const loadApiInvoices = async () => {
 const dataFacturas = async () => {
   loading.value = true;
   try {
-    // Cargar facturas locales
-    await loadLocalInvoices();
+  
     
     // Cargar facturas de API
     await loadApiInvoices();
@@ -964,4 +965,43 @@ const validateInvoice = async () => {
 .bg-secondary {
   background-color: #2196f3; /* Azul */
 }
+#contenedorFactura{
+  margin-top: 100px;
+  width: 100%;
+}
+div.q-page-container{
+  width: 100%;
+
+}
+#opcionesFactura{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+}
+.q-mr-xs{
+  width: 50px;
+}
+#btnCrearFactura{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.q-ml-sm{
+  width: 200px;
+}
+.text-h6{
+  
+  text-align: center;
+  
+}
+
+.contenedorCabeza{
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  width: 100%;
+
+}
+
 </style>

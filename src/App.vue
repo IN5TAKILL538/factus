@@ -8,6 +8,6 @@
   // No necesitas importar nada aquí relacionado con el router
   </script>
   
-  <style scoped>
-
+  <style>
+ 
   </style>
