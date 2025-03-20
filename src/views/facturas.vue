@@ -335,23 +335,18 @@
                   color="secondary" 
                   outline
                   icon="add" 
-                  label="Agregar Producto" 
+                  label="Producto" 
                   @click="addItem" 
                 />
               </div>
             </div>
             
             <div class="q-gutter-sm">
-              <q-btn 
-                type="submit" 
-                color="primary" 
-                label="Guardar Factura Local" 
-                :disable="!invoice.customerId || invoice.items.some(item => !item.productId || item.quantity <= 0)" 
-              />
+              
               <q-btn 
                 type="button" 
                 color="deep-orange" 
-                label="Validar Factura con Factus" 
+                label="Crear Factura" 
                 @click="validateInvoice"
                 :disable="!invoice.customerId || invoice.items.some(item => !item.productId || item.quantity <= 0)"
               />

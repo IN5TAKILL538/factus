@@ -293,8 +293,6 @@ onMounted(async () => {
   await loadInitialMunicipalities();
 });
 
-
-
 // Función loadInitialMunicipalities (corregida)
 async function loadInitialMunicipalities() {
   try {
@@ -314,7 +312,7 @@ async function loadInitialMunicipalities() {
     console.log("Municipios cargados:", municipalities.value);
   } catch (error) {
     console.error("Error cargando municipios:", error);
-    $q.notify({ type: 'negative', message: 'Error cargando municipios' });
+    showNotification('negative', 'Error cargando municipios');
   }
 }
 
@@ -407,27 +405,18 @@ async function submitUser() {
     if (isEditing.value) {
       // Update existing user
       await postData(`/api/usuarios/${currentUserId.value}`, user.value);
-      $q.notify({
-        type: 'positive',
-        message: 'Usuario actualizado correctamente'
-      });
+      showNotification('positive', 'Usuario actualizado correctamente');
     } else {
       // Create new user
       await postData('/api/usuarios', user.value);
-      $q.notify({
-        type: 'positive',
-        message: 'Usuario creado correctamente'
-      });
+      showNotification('positive', 'Usuario creado correctamente');
     }
     
     // Refresh user list and close modal
     await fetchUsers();
     closeModal();
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: 'No se pudo guardar el usuario'
-    });
+    showNotification('negative', 'No se pudo guardar el usuario');
   }
 }
 
@@ -435,23 +424,19 @@ async function submitUser() {
 async function deleteUser(id) {
   try {
     await postData(`/api/usuarios/${id}/delete`, {});
-    $q.notify({
-      type: 'positive',
-      message: 'Usuario eliminado correctamente'
-    });
+    showNotification('positive', 'Usuario eliminado correctamente');
     await fetchUsers();
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: 'No se pudo eliminar el usuario'
-    });
+    showNotification('negative', 'No se pudo eliminar el usuario');
   }
 }
+
 const notification = ref({
   show: false,
   type: 'positive', // positive, negative, loading
   message: ''
 });
+
 // Funciones de notificación personalizadas
 const showNotification = (type, message) => {
   notification.value = {

@@ -1,40 +1,22 @@
 <template>
   <div class="q-pa-md" id="contenedorProductos">
-    
+
 
     <!-- Tabla de Productos -->
-    <q-table
-    style="width: 1000px;"
-      
-      :rows="products"
-      :columns="columns"
-      row-key="_id"
-      class="q-mt-md"
-      separator="cell"
-      :loading="loading"
-    >
-    <template v-slot:top>
-      <div class="contenedorCabeza">  <div class="text-h6">Listado de Facturas</div><div id="btnCrearProductos"><q-btn color="primary" label="Crear Producto" @click="openProductModal" class="btn-primary"/></div></div>
+    <q-table style="width: 1000px;" :rows="products" :columns="columns" row-key="_id" class="q-mt-md" separator="cell"
+      :loading="loading">
+      <template v-slot:top>
+        <div class="contenedorCabeza">
+          <div class="text-h6">Listado de Productos</div>
+          <div id="btnCrearProductos"><q-btn color="primary" label="Crear Producto" @click="openProductModal"
+              class="btn-primary" /></div>
+        </div>
       </template>
       <!-- Acciones personalizadas -->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn 
-            icon="edit" 
-            flat 
-            dense 
-            color="primary" 
-            @click="editProduct(props.row)"
-            class="q-mr-xs"
-          />
-          <q-btn 
-            icon="delete" 
-            flat 
-            dense 
-            color="negative" 
-            @click="deleteProduct(props.row._id)"
-            class="q-mr-xs"
-          />
+          <q-btn icon="edit" flat dense color="primary" @click="editProduct(props.row)" class="q-mr-xs" />
+          <q-btn icon="delete" flat dense color="negative" @click="deleteProduct(props.row._id)" class="q-mr-xs" />
         </q-td>
       </template>
     </q-table>
@@ -47,96 +29,30 @@
         </q-card-section>
 
         <q-card-section>
-          <q-form 
-            ref="productForm"
-            @submit.prevent="submitProduct" 
-            class="q-gutter-md"
-          >
-            <q-input 
-              v-model="product.codeReference" 
-              label="Código de Referencia" 
-              outlined 
-              required 
-              :rules="[val => !!val || 'El código de referencia es requerido']"
-            />
-            <q-input 
-              v-model="product.name" 
-              label="Nombre" 
-              outlined 
-              required
-              :rules="[val => !!val || 'El nombre es requerido']"
-            />
-            <q-input 
-              v-model.number="product.price" 
-              type="number" 
-              label="Precio" 
-              outlined 
-              required
-              :rules="[val => val > 0 || 'El precio debe ser mayor a 0']"
-            />
-            <q-input 
-              v-model.number="product.taxRate" 
-              type="number" 
-              label="Impuesto (%)" 
-              outlined 
-              required
-              :rules="[val => val >= 0 || 'El impuesto no puede ser negativo']"
-            />
-            <q-select 
-              v-model="product.unitMeasureId" 
-              :options="unitMeasureOptions" 
-              label="Unidad de Medida" 
-              outlined 
-              required
-              :rules="[val => !!val || 'Seleccione una unidad de medida']"
-              @filter="filterUnitMeasures"
-              use-input
-              input-debounce="300"
-              option-value="id"
-              option-label="name"
-              map-options
-            />
-            <q-select 
-              v-model="product.standardCodeId" 
-              :options="standardCodeOptions" 
-              label="Código Estándar" 
-              outlined 
-              required
-              :rules="[val => !!val || 'Seleccione un código estándar']"
-              option-value="value"
-              option-label="label"
-              map-options
-            />
-            <q-select 
-              v-model="product.tributeId" 
-              :options="tributeOptions" 
-              label="Tributo" 
-              outlined 
-              required
-              :rules="[val => !!val || 'Seleccione un tributo']"
-              @filter="filterTributes"
-              use-input
-              input-debounce="300"
-              option-value="id"
-              option-label="name"
-              map-options
-            />
+          <q-form ref="productForm" @submit.prevent="submitProduct" class="q-gutter-md">
+            <q-input v-model="product.codeReference" label="Código de Referencia" outlined required
+              :rules="[val => !!val || 'El código de referencia es requerido']" />
+            <q-input v-model="product.name" label="Nombre" outlined required
+              :rules="[val => !!val || 'El nombre es requerido']" />
+            <q-input v-model.number="product.price" type="number" label="Precio" outlined required
+              :rules="[val => val > 0 || 'El precio debe ser mayor a 0']" />
+            <q-input v-model.number="product.taxRate" type="number" label="Impuesto (%)" outlined required
+              :rules="[val => val >= 0 || 'El impuesto no puede ser negativo']" />
+            <q-select v-model="product.unitMeasureId" :options="unitMeasureOptions" label="Unidad de Medida" outlined
+              required :rules="[val => !!val || 'Seleccione una unidad de medida']" @filter="filterUnitMeasures"
+              use-input input-debounce="300" option-value="id" option-label="name" map-options />
+            <q-select v-model="product.standardCodeId" :options="standardCodeOptions" label="Código Estándar" outlined
+              required :rules="[val => !!val || 'Seleccione un código estándar']" option-value="value"
+              option-label="label" map-options />
+            <q-select v-model="product.tributeId" :options="tributeOptions" label="Tributo" outlined required
+              :rules="[val => !!val || 'Seleccione un tributo']" @filter="filterTributes" use-input input-debounce="300"
+              option-value="id" option-label="name" map-options />
           </q-form>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn 
-            flat 
-            label="Cancelar" 
-            color="negative" 
-            v-close-popup 
-          />
-          <q-btn 
-            color="primary" 
-            :label="isEditing ? 'Actualizar' : 'Guardar'" 
-            type="submit"
-            @click="submitProduct"
-          />
+          <q-btn flat label="Cancelar" color="negative" v-close-popup />
+          <q-btn color="primary" :label="isEditing ? 'Actualizar' : 'Guardar'" type="submit" @click="submitProduct" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -151,30 +67,29 @@ import apiCliente from "../plugins/factus.js"
 
 // Configuración de columnas para la tabla
 const columns = [
-  { 
-    name: 'codeReference', 
-  
-    label: 'Código', 
-    align: 'left', 
-    field: 'codeReference' 
+  {
+    name: 'codeReference',
+    label: 'Código',
+    align: 'left',
+    field: 'codeReference'
   },
-  { 
-    name: 'name', 
-    required: true, 
-    label: 'Nombre', 
-    align: 'left', 
-    field: 'name' 
+  {
+    name: 'name',
+    required: true,
+    label: 'Nombre',
+    align: 'left',
+    field: 'name'
   },
-  { 
-    name: 'price', 
-    label: 'Precio', 
-    field: 'price', 
-    sortable: true 
+  {
+    name: 'price',
+    label: 'Precio',
+    field: 'price',
+    sortable: true
   },
-  { 
-    name: 'actions', 
-    label: 'Acciones', 
-    field: 'actions' 
+  {
+    name: 'actions',
+    label: 'Acciones',
+    field: 'actions'
   }
 ]
 
@@ -184,7 +99,6 @@ const products = ref([])
 const productModal = ref(false)
 const isEditing = ref(false)
 const product = ref({
-  
   codeReference: '',
   name: '',
   price: "",
@@ -194,6 +108,7 @@ const product = ref({
   tributeId: ""
 })
 const productForm = ref(null)
+const loading = ref(false);
 
 // Opciones para selects
 const unitMeasureOptions = ref([])
@@ -210,15 +125,12 @@ onMounted(async () => {
   try {
     const response = await getData('/api/servicios')
     products.value = response
-    
+
     // Cargar datos iniciales para los selects
     await loadInitialUnitMeasures()
     await loadInitialTributes()
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: 'Error al cargar datos iniciales'
-    })
+    showNotification('negative', 'Error al cargar datos iniciales')
     console.error('Error al cargar datos iniciales:', error)
   }
 })
@@ -316,7 +228,6 @@ async function filterTributes(val, update) {
 // Abrir modal para crear producto
 function openProductModal() {
   product.value = {
-    
     codeReference: '',
     name: '',
     price: null,
@@ -341,19 +252,13 @@ function editProduct(selectedProduct) {
 async function deleteProduct(id) {
   try {
     await apiCliente.delete(`/api/servicios/${id}`)
-    
+
     // Eliminar de la lista local
     products.value = products.value.filter(p => p._id !== id)
-    
-    $q.notify({
-      type: 'positive',
-      message: 'Producto eliminado correctamente'
-    })
+
+    showNotification('positive', 'Producto eliminado correctamente')
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: error.response?.data?.message || 'Error al eliminar producto'
-    })
+    showNotification('negative', error.response?.data?.message || 'Error al eliminar producto')
     console.error('Error al eliminar producto:', error)
   }
 }
@@ -368,129 +273,119 @@ async function submitProduct() {
         return
       }
     }
-    
+
     // Validación adicional para el código de referencia
     if (!product.value.codeReference) {
-      $q.notify({
-        type: 'negative',
-        message: 'El código de referencia es obligatorio'
-      })
+      showNotification('negative', 'El código de referencia es obligatorio')
       return
     }
-    
+
     // Crear una copia del producto con el formato correcto de IDs
     const productToSubmit = {
       ...product.value,
-      unitMeasureId: typeof product.value.unitMeasureId === 'object' ? 
-                     product.value.unitMeasureId.id : 
-                     product.value.unitMeasureId,
-      standardCodeId: typeof product.value.standardCodeId === 'object' ? 
-                      product.value.standardCodeId.value : 
-                      product.value.standardCodeId,
-      tributeId: typeof product.value.tributeId === 'object' ? 
-                 product.value.tributeId.id : 
-                 product.value.tributeId
+      unitMeasureId: typeof product.value.unitMeasureId === 'object' ?
+        product.value.unitMeasureId.id :
+        product.value.unitMeasureId,
+      standardCodeId: typeof product.value.standardCodeId === 'object' ?
+        product.value.standardCodeId.value :
+        product.value.standardCodeId,
+      tributeId: typeof product.value.tributeId === 'object' ?
+        product.value.tributeId.id :
+        product.value.tributeId
     }
-    
+
     if (isEditing.value) {
       // Actualizar producto existente
       const updatedProduct = await putData(`/api/servicios/${product.value._id}`, productToSubmit)
-      
+
       // Actualizar en la lista de productos
       const index = products.value.findIndex(p => p._id === updatedProduct._id)
       if (index !== -1) {
         products.value[index] = updatedProduct
       }
-      
-      $q.notify({
-        type: 'positive',
-        message: 'Producto actualizado correctamente'
-      })
+
+      showNotification('positive', 'Producto actualizado correctamente')
     } else {
       // Crear nuevo producto
       const newProduct = await postData('/api/servicios', productToSubmit)
       products.value.push(newProduct)
-      
-      $q.notify({
-        type: 'positive',
-        message: 'Producto creado correctamente'
-      })
+
+      showNotification('positive', 'Producto creado correctamente')
     }
     productModal.value = false
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: error.response?.data?.message || 'Error al guardar producto'
-    })
+    showNotification('negative', error.response?.data?.message || 'Error al guardar producto')
     console.error('Error al guardar producto:', error)
   }
 }
+
 const notification = ref({
   show: false,
   type: 'positive', // positive, negative, loading
   message: ''
-});
+})
+
 // Funciones de notificación personalizadas
 const showNotification = (type, message) => {
   notification.value = {
     show: true,
     type,
     message
-  };
-  
+  }
+
   // Auto-ocultar para notificaciones no de carga
   if (type !== 'loading') {
     setTimeout(() => {
-      hideNotification();
-    }, 3000);
+      hideNotification()
+    }, 3000)
   }
-};
+}
 
 const hideNotification = () => {
-  notification.value.show = false;
-};
+  notification.value.show = false
+}
 </script>
 
 <style scoped>
-
-
-
-#contenedorProductos{
+#contenedorProductos {
   margin-top: 100px;
   width: 100%;
 }
-#btnCrearProductos{
+
+#btnCrearProductos {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
-  
+
 }
-.btn-primary{
+
+.btn-primary {
   justify-content: center;
 }
-.text-h6{
-  
+
+.text-h6 {
   text-align: center;
- 
 }
-#opcionesUsuarios{
+
+#opcionesUsuarios {
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
-div.q-page-container{
-  width: 100%;
 
+div.q-page-container {
+  width: 100%;
 }
-.q-mr-xs{
+
+.q-mr-xs {
   width: 50px;
 }
-.contenedorCabeza{
+
+.contenedorCabeza {
   display: flex;
   justify-content: space-around;
   align-content: center;
   width: 100%;
-
 }
 </style>
