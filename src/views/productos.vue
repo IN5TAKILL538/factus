@@ -22,48 +22,117 @@
     </q-table>
 
     <!-- Modal para Crear/Editar Producto -->
-    <q-dialog v-model="productModal" persistent>
-      <q-card style="min-width: 500px">
-        <q-card-section>
-          <div class="text-h6">{{ isEditing ? 'Editar' : 'Crear' }} Producto</div>
-        </q-card-section>
+    <q-dialog v-model="productModal" persistent maximized color="primary">
+  <q-card style="min-width: 500px">
+    <q-card-section>
+      <div class="text-h6">{{ isEditing ? 'Editar' : 'Crear' }} Producto</div>
+      
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+    </q-card-section>
 
-        <q-card-section>
-          <q-form ref="productForm" @submit.prevent="submitProduct" class="q-gutter-md" color="primary">
-            <q-input v-model="product.codeReference" label="Código de Referencia" outlined required
-              :rules="[val => !!val || 'El código de referencia es requerido']" />
-            <q-input v-model="product.name" label="Nombre" outlined required
-              :rules="[val => !!val || 'El nombre es requerido']" />
-            <q-input v-model.number="product.price" type="number" label="Precio" outlined required
-              :rules="[val => val > 0 || 'El precio debe ser mayor a 0']" />
-            <q-input v-model.number="product.taxRate" type="number" label="Impuesto (%)" outlined required
-              :rules="[val => val >= 0 || 'El impuesto no puede ser negativo']" />
+    <q-card-section>
+      <q-form ref="productForm" @submit.prevent="submitProduct" class="q-gutter-md" color="primary">
+        <q-card class="q-mb-md">
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold q-mb-sm">Información Básica</div>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <q-input v-model="product.codeReference" label="Código de Referencia" outlined required
+                  :rules="[val => !!val || 'El código de referencia es requerido']" />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input v-model="product.name" label="Nombre" outlined required
+                  :rules="[val => !!val || 'El nombre es requerido']" />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
 
-             <q-select dark v-model="product.unitMeasureId" :options="unitMeasureOptions" label="Unidad de Medida" 
-              required :rules="[val => !!val || 'Seleccione una unidad de medida']" @filter="filterUnitMeasures"
-              use-input input-debounce="300" option-value="id" option-label="name" map-options outlined/> 
+        <q-card class="q-mb-md">
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold q-mb-sm">Detalles Financieros</div>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <q-input v-model.number="product.price" type="number" label="Precio" outlined required
+                  :rules="[val => val > 0 || 'El precio debe ser mayor a 0']" />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input v-model.number="product.taxRate" type="number" label="Impuesto (%)" outlined required
+                  :rules="[val => val >= 0 || 'El impuesto no puede ser negativo']" />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
 
+        <q-card class="q-mb-md">
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold q-mb-sm">Clasificación</div>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <q-select 
+                  
+                  v-model="product.unitMeasureId" 
+                  :options="unitMeasureOptions" 
+                  label="Unidad de Medida" 
+                  required 
+                  :rules="[val => !!val || 'Seleccione una unidad de medida']" 
+                  @filter="filterUnitMeasures"
+                  use-input 
+                  input-debounce="300" 
+                  option-value="id" 
+                  option-label="name" 
+                  map-options 
+                  outlined
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select 
+                  negative
+                  v-model="product.standardCodeId" 
+                  :options="standardCodeOptions" 
+                  label="Código Estándar" 
+                  outlined
+                  required 
+                  :rules="[val => !!val || 'Seleccione un código estándar']" 
+                  option-value="value"
+                  option-label="label" 
+                  map-options 
+                />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <q-card>
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold q-mb-sm">Información Tributaria</div>
+            <q-select 
               
+              v-model="product.tributeId" 
+              :options="tributeOptions" 
+              label="Tributo" 
+              outlined 
+              required
+              :rules="[val => !!val || 'Seleccione un tributo']" 
+              @filter="filterTributes" 
+              use-input 
+              input-debounce="300"
+              option-value="id" 
+              option-label="name" 
+              map-options 
+            />
+          </q-card-section>
+        </q-card>
+      </q-form>
+    </q-card-section>
 
-
-
-
-
-            <q-select dark v-model="product.standardCodeId" :options="standardCodeOptions" label="Código Estándar" outlined
-              required :rules="[val => !!val || 'Seleccione un código estándar']" option-value="value"
-              option-label="label" map-options />
-            <q-select dark v-model="product.tributeId" :options="tributeOptions" label="Tributo" outlined required
-              :rules="[val => !!val || 'Seleccione un tributo']" @filter="filterTributes" use-input input-debounce="300"
-              option-value="id" option-label="name" map-options />
-          </q-form>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="negative" v-close-popup />
-          <q-btn color="primary" :label="isEditing ? 'Actualizar' : 'Guardar'" type="submit" @click="submitProduct" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <q-card-actions align="right">
+      <q-btn flat label="Cancelar" color="negative" v-close-popup />
+      <q-btn color="primary" :label="isEditing ? 'Actualizar' : 'Guardar'" type="submit" @click="submitProduct" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </div>
 </template>
 
@@ -78,26 +147,28 @@ const columns = [
   {
     name: 'codeReference',
     label: 'Código',
-    align: 'left',
+    align: 'center',
     field: 'codeReference'
   },
   {
     name: 'name',
     required: true,
     label: 'Nombre',
-    align: 'left',
+    align: 'center',
     field: 'name'
   },
   {
     name: 'price',
     label: 'Precio',
     field: 'price',
+    align: 'center',
     sortable: true
   },
   {
     name: 'actions',
     label: 'Acciones',
-    field: 'actions'
+    field: 'actions',
+    align: 'center',
   }
 ]
 
@@ -398,10 +469,5 @@ div.q-page-container {
   display: flex;
   justify-content: center;
 }
-.q-menu .q-item {
-  color: black !important;
-}
-.q-menu {
-  background-color: white !important;
-}
+
 </style>

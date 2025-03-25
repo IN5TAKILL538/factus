@@ -59,115 +59,465 @@
       </template>
     </q-table>
     
-    <!-- Modal de Detalles de Factura (Modificado) -->
-    <q-dialog v-model="showInvoiceDetailsModal" persistent maximized>
-      <q-card class="column">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Detalles de Factura</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        
-        <q-card-section v-if="selectedInvoice" class="col q-pt-none scroll">
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-card>
-                <q-card-section>
-                  <div class="text-h6">Información de Factura</div>
-                  <div class="q-my-sm">
-                    <strong>Número:</strong> {{ selectedInvoice.number || selectedInvoice.referenceCode }}
-                  </div>
-                  <div class="q-my-sm">
-                    <strong>Total:</strong> {{ formatCurrency(selectedInvoice.total || calculateLocalInvoiceTotal()) }}
-                  </div>
-                  <div class="q-my-sm">
-                    <strong>Fecha:</strong> {{ formatDate(selectedInvoice.created_at) }}
-                  </div>
-                  <div v-if="selectedInvoice.cufe" class="q-my-sm">
-                    <strong>CUFE:</strong> {{ selectedInvoice.cufe }}
-                  </div>
-                  <div class="q-my-sm">
-                    <strong>Estado:</strong> {{ selectedInvoice.status || 'Pendiente' }}
-                  </div>
-                  <div v-if="selectedInvoice.url" class="q-my-sm">
-                    <strong>URL Pública:</strong> 
-                    <a :href="selectedInvoice.url" target="_blank">{{ selectedInvoice.url }}</a>
-                  </div>
-                  <div class="q-my-sm" v-if="selectedInvoice.setpNumber">
-                    <strong>Número SETP:</strong> {{ selectedInvoice.setpNumber }}
-                  </div>
-                </q-card-section>
-              </q-card>
-            </div>
-            
-            <div class="col-12 col-md-6">
-              <q-card>
-                <q-card-section>
-                  <div class="text-h6">Información del Cliente</div>
-                  <div class="q-my-sm">
-                    <strong>Nombre:</strong> {{ selectedInvoice.names || selectedInvoice.customer?.names }}
-                  </div>
-                  <div class="q-my-sm">
-                    <strong>Identificación:</strong> {{ selectedInvoice.identification || selectedInvoice.customer?.identification }}
-                  </div>
-                  <div class="q-my-sm">
-                    <strong>Correo:</strong> {{ selectedInvoice.email || selectedInvoice.customer?.email }}
-                  </div>
-                </q-card-section>
-              </q-card>
-            </div>
+
+
+
+
+
+<q-dialog
+  v-model="showInvoiceDetailsModal"
+  persistent
+  maximized
+  class="invoice-details-dialog"
+>
+  <q-card class="full-height column no-wrap">
+    <!-- Elegant Header -->
+    <q-toolbar class="bg-primary text-white shadow-2">
+      <q-toolbar-title class="text-h5 text-weight-bold">
+        <q-icon name="receipt_long" class="q-mr-md" size="md" />
+        Detalles de Factura
+      </q-toolbar-title>
+      <q-btn 
+        icon="close" 
+        flat 
+        round 
+        dense 
+        color="white" 
+        v-close-popup 
+        class="hover-accent" 
+      />
+    </q-toolbar>
+
+    <!-- Scrollable Content -->
+    <q-card-section v-if="selectedInvoice" class="col scroll q-pa-lg">
+      <!-- Company Header -->
+      <div class="row items-center q-mb-xl">
+        <div class="col-12 text-center">
+          <!-- Logo Section -->
+          <div class="flex flex-center q-mb-md">
+            <q-avatar size="120px" class="shadow-3">
+              <img 
+                :src="
+                  invoiceDetails?.company?.url_logo || 
+                  selectedInvoice.logoUrl || 
+                  '/default-logo.png'
+                "
+                :alt="
+                  invoiceDetails?.company?.name || 
+                  selectedInvoice.companyName || 
+                  'Company Logo'
+                "
+                class="fit-contain"
+              />
+            </q-avatar>
           </div>
 
-          <q-card class="q-mt-md">
+          <!-- Company Details -->
+          <div>
+            <div class="text-h4 text-primary text-weight-bold">
+              {{ 
+                invoiceDetails?.company?.company || 
+                selectedInvoice.companyName || 
+                'FACTUS S.A.S.' 
+              }}
+            </div>
+            <div class="text-subtitle1 text-grey-8">
+              NIT: {{ 
+                invoiceDetails?.company?.nit || 
+                selectedInvoice.companyNit || 
+                '' 
+              }}-{{ 
+                invoiceDetails?.company?.dv || 
+                selectedInvoice.companyDv || 
+                '' 
+              }}
+            </div>
+            <div class="text-caption text-grey-7">
+              {{ 
+                invoiceDetails?.company?.direction || 
+                selectedInvoice.companyAddress || 
+                '' 
+              }} - {{ 
+                invoiceDetails?.company?.municipality || 
+                selectedInvoice.companyMunicipality || 
+                '' 
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="row q-col-gutter-lg">
+        <!-- Left Column -->
+        <div class="col-12 col-md-6">
+          <!-- Invoice Information Card -->
+          <q-card flat bordered class="q-mb-md shadow-1">
             <q-card-section>
-              <div class="text-h6">Productos / Servicios</div>
-              <q-table 
-                :rows="selectedInvoice.items"
-                :columns="itemColumns"
-                row-key="product"
-                flat
-                dense
-              />
+              <div class="text-h6 text-primary q-mb-sm flex items-center">
+                <q-icon name="info" class="q-mr-sm" />
+                Información de Factura
+              </div>
+              <q-list dense>
+                <q-item>
+                  <q-item-section>Número de Factura:</q-item-section>
+                  <q-item-section side class="text-weight-bold">
+                    {{ 
+                      selectedInvoice.number || 
+                      selectedInvoice.setpNumber || 
+                      selectedInvoice.referenceCode || 
+                      'Sin número' 
+                    }}
+                    <span 
+                      v-if="selectedInvoice.setpNumber" 
+                      class="text-caption text-grey-7 q-ml-sm"
+                    >
+                      (Ref: {{ selectedInvoice.setpNumber }})
+                    </span>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Valor Total:</q-item-section>
+                  <q-item-section side class="text-h6 text-primary">
+                    {{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.total || 
+                        selectedInvoice.total || 
+                        calculateLocalInvoiceTotal()
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Fecha de Emisión:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      formatDate(invoiceDetails?.bill?.created_at || selectedInvoice.created_at) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Estado:</q-item-section>
+                  <q-item-section side>
+                    <q-badge 
+                      :color="
+                        (invoiceDetails?.bill?.status === 1 || selectedInvoice.status === 'Validada') 
+                        ? 'green' 
+                        : 'orange'
+                      "
+                      class="text-weight-bold"
+                    >
+                      {{ 
+                        invoiceDetails?.bill?.status === 1 
+                        ? 'Validada' 
+                        : selectedInvoice.status || 'Pendiente' 
+                      }}
+                    </q-badge>
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </q-card-section>
           </q-card>
 
-          <div v-if="selectedInvoice.qr" class="q-mt-md text-center">
-            <q-card>
-              <q-card-section>
-                <div class="text-h6">Código QR</div>
-                <img :src="selectedInvoice.qr" alt="Código QR de Factura" class="q-mt-md" />
-              </q-card-section>
-            </q-card>
-          </div>
+          <!-- Customer Information Card -->
+          <q-card flat bordered class="shadow-1">
+            <q-card-section>
+              <div class="text-h6 text-primary q-mb-sm flex items-center">
+                <q-icon name="person" class="q-mr-sm" />
+                Información del Cliente
+              </div>
+              <q-list dense>
+                <q-item>
+                  <q-item-section>Nombre:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.customer?.graphic_representation_name || 
+                      selectedInvoice.names || 
+                      selectedInvoice.customerName || 
+                      'No disponible' 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Identificación:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.customer?.identification || 
+                      selectedInvoice.identification || 
+                      selectedInvoice.customerIdentification || 
+                      'No disponible' 
+                    }}
+                    <span v-if="invoiceDetails?.customer?.dv">
+                      -{{ invoiceDetails.customer.dv }}
+                    </span>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Correo:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.customer?.email || 
+                      selectedInvoice.email || 
+                      selectedInvoice.customerEmail || 
+                      'No disponible' 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Dirección:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.customer?.address || 
+                      selectedInvoice.customerAddress || 
+                      'No disponible' 
+                    }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card-section>
+          </q-card>
+        </div>
 
-          <div v-if="selectedInvoice.qrImage" class="q-mt-md text-center">
-            <q-card>
-              <q-card-section>
-                <div class="text-h6">Imagen QR</div>
-                <img :src="selectedInvoice.qrImage" alt="Imagen QR de Factura" class="q-mt-md" />
-              </q-card-section>
-            </q-card>
-          </div>
+        <!-- Right Column -->
+        <div class="col-12 col-md-6">
+          <!-- Payment Details Card -->
+          <q-card flat bordered class="q-mb-md shadow-1">
+            <q-card-section>
+              <div class="text-h6 text-primary q-mb-sm flex items-center">
+                <q-icon name="payments" class="q-mr-sm" />
+                Detalles de Pago
+              </div>
+              <q-list dense>
+                <q-item>
+                  <q-item-section>Forma de Pago:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.bill?.payment_form?.name || 
+                      selectedInvoice.paymentForm || 
+                      'No especificado' 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Método de Pago:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      invoiceDetails?.bill?.payment_method?.name || 
+                      selectedInvoice.paymentMethod || 
+                      'No especificado' 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="invoiceDetails?.bill?.payment_due_date || selectedInvoice.paymentDueDate">
+                  <q-item-section>Fecha de Vencimiento:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      formatDate(
+                        invoiceDetails?.bill?.payment_due_date || 
+                        selectedInvoice.paymentDueDate
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card-section>
+          </q-card>
 
-          <div v-if="selectedInvoice.isApi" class="row q-col-gutter-md q-mt-md">
-            <div class="col-12">
-              <q-card>
-                <q-card-section class="row justify-between items-center">
-                  <div class="text-h6">Acciones</div>
-                  <div>
-                    <q-btn color="secondary" label="Descargar PDF" icon="download" @click="downloadInvoicePdf(selectedInvoice)" />
-                    <q-btn color="accent" label="Ver en Navegador" icon="open_in_new" class="q-ml-sm" @click="openInvoiceInBrowser(selectedInvoice)" />
+          <!-- Value Summary Card -->
+          <q-card flat bordered class="shadow-1">
+            <q-card-section>
+              <div class="text-h6 text-primary q-mb-sm flex items-center">
+                <q-icon name="calculate" class="q-mr-sm" />
+                Resumen de Valores
+              </div>
+              <q-list dense>
+                <q-item>
+                  <q-item-section>Valor Bruto:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.gross_value || 
+                        selectedInvoice.grossValue || 
+                        calculateLocalInvoiceTotal()
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="Number(invoiceDetails?.bill?.discount || selectedInvoice.discount) > 0">
+                  <q-item-section>Descuentos:</q-item-section>
+                  <q-item-section side class="text-negative">
+                    -{{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.discount || 
+                        selectedInvoice.discount
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Base Gravable:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.taxable_amount || 
+                        selectedInvoice.taxableAmount || 
+                        calculateLocalInvoiceTotal()
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>Impuestos:</q-item-section>
+                  <q-item-section side>
+                    {{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.tax_amount || 
+                        selectedInvoice.taxAmount || 
+                        0
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+                <q-item class="bg-blue-1">
+                  <q-item-section class="text-h6 text-primary">
+                    TOTAL:
+                  </q-item-section>
+                  <q-item-section side class="text-h6 text-primary">
+                    {{ 
+                      formatCurrency(
+                        invoiceDetails?.bill?.total || 
+                        selectedInvoice.total || 
+                        calculateLocalInvoiceTotal()
+                      ) 
+                    }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <!-- Products/Services Table -->
+      <q-card flat bordered class="q-mt-md shadow-1">
+        <q-card-section>
+          <div class="text-h6 text-primary q-mb-sm flex items-center">
+            <q-icon name="inventory_2" class="q-mr-sm" />
+            Productos/Servicios
+          </div>
+          <q-table
+            :rows="
+              invoiceDetails?.items || 
+              selectedInvoice.items || 
+              []
+            "
+            :columns="[
+              { name: 'name', label: 'Producto', align: 'left', field: 'name' },
+              { name: 'quantity', label: 'Cantidad', align: 'center', field: 'quantity' },
+              { 
+                name: 'price', 
+                label: 'Precio Unitario', 
+                align: 'right', 
+                field: 'price', 
+                format: val => formatCurrency(val) 
+              },
+              { 
+                name: 'total', 
+                label: 'Total', 
+                align: 'right', 
+                field: 'total', 
+                format: val => formatCurrency(val) 
+              }
+            ]"
+            row-key="name"
+            flat
+            dense
+            hide-pagination
+          />
+        </q-card-section>
+      </q-card>
+
+      <!-- QR Code Section -->
+           <!-- QR Code -->
+           <div
+            class="row justify-center q-mt-md"
+            v-if="
+              (selectedInvoice.isApi &&
+                (invoiceDetails?.bill?.qr_image || invoiceDetails?.bill?.qr)) ||
+              selectedInvoice.qrImage ||
+              selectedInvoice.qr
+            "
+          >
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-card flat bordered class="text-center">
+                <q-card-section>
+                  <div class="text-h6 text-primary">
+                    <q-icon name="qr_code" class="q-mr-sm" />
+                    Código QR
+                  </div>
+
+                  <q-separator class="q-my-sm" />
+
+                  <div class="flex flex-center q-pa-md">
+                    <img
+                      :src="
+                        invoiceDetails?.bill?.qr_image ||
+                        invoiceDetails?.bill?.qr ||
+                        selectedInvoice.qrImage ||
+                        selectedInvoice.qr
+                      "
+                      alt="Código QR de Factura"
+                      class="q-mt-sm qr-image"
+                    />
+                  </div>
+                  <div class="text-caption q-mt-sm text-grey-7">
+                    Escanee para verificar la factura
                   </div>
                 </q-card-section>
               </q-card>
             </div>
           </div>
         </q-card-section>
-      </q-card>
-    </q-dialog>
+
+    <!-- Dialog Actions -->
+    <q-card-actions align="right" class="bg-grey-2 q-pa-md">
+      <q-btn 
+        flat 
+        label="Cerrar" 
+        color="grey-7" 
+        v-close-popup 
+        no-caps
+      />
+      <q-btn 
+        color="primary" 
+        label="Descargar PDF" 
+        icon="download"
+        @click="downloadInvoicePdf(selectedInvoice)"
+        no-caps
+      />
+      <q-btn 
+        v-if="invoiceDetails?.bill?.public_url || selectedInvoice.url"
+        color="secondary" 
+        label="Ver en Línea" 
+        icon="open_in_new"
+        :href="invoiceDetails?.bill?.public_url || selectedInvoice.url"
+        target="_blank"
+        no-caps
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+
+
+
+
+
+
+
     
     <!-- Modal para Crear/Validar Factura -->
-    <q-dialog v-model="showCreateModal" persistent maximized color="primary">
+    <q-dialog secondary v-model="showCreateModal" persistent maximized color="primary">
       <q-card class="column">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Crear y Validar Factura</div>
@@ -642,16 +992,7 @@ const calculateLocalInvoiceTotal = () => {
 };
 
 // Abrir modal de detalles de factura
-const openInvoiceDetailsModal = (invoice) => {
-  selectedInvoice.value = {
-    ...invoice,
-    qr: invoice.qr || null,
-    cufe: invoice.cufe || null,
-    numero: invoice.numero || invoice.number || invoice.referenceCode,
-    url: invoice.url || null
-  };
-  showInvoiceDetailsModal.value = true;
-};
+
 
 // Método para alternar visualización de facturas de API
 const toggleApiInvoices = () => {
@@ -954,6 +1295,112 @@ const validateInvoice = async () => {
     }
   }
 };
+
+
+
+
+
+
+
+const invoiceDetails = ref(null);
+
+
+const openInvoiceDetailsModal = async (invoiceData) => {
+  selectedInvoice.value = invoiceData;
+  invoiceDetails.value = null;
+  showInvoiceDetailsModal.value = true;
+  console.log("Full Invoice Data:", JSON.stringify(invoiceData, null, 2));
+  try {
+    showLoading("Cargando detalles de factura...");
+    const token = store.token || localStorage.getItem("token");
+   
+  
+    const billNumber = 
+      invoiceData.factusData?.number || 
+      invoiceData.setpNumber || 
+      invoiceData.referenceCode || 
+      invoiceData.number;
+   
+    if (!billNumber) {
+      throw new Error("No se encontró un número de factura válido");
+    }
+   
+    console.log("Intentando cargar factura con número:", billNumber,
+                "Tipo de factura:", invoiceData.isApi ? "API" : "Local");
+ 
+    if (!invoiceData.isApi) {
+      invoiceDetails.value = {
+        company: {
+          name: "FACTUS S.A.S.",
+          nit: "901724254",
+        },
+        customer: {
+          identification: invoiceData.customer?.identification || 'N/A',
+          names: invoiceData.customer?.names || 'Cliente',
+          email: invoiceData.customer?.email,
+          phone: invoiceData.customer?.phone,
+          address: invoiceData.customer?.address
+        },
+        bill: {
+          number: billNumber,
+          setpNumber: invoiceData.factusData?.number,
+          referenceCode: invoiceData.referenceCode,
+          total: invoiceData.items.reduce((total, item) => 
+            total + (item.product.price * item.quantity), 0),
+          cufe: invoiceData.factusData?.cufe,
+          public_url: invoiceData.factusData?.public_url,
+          qr: invoiceData.factusData?.qr,
+          status: invoiceData.isValidated ? 'Validada' : 'Pendiente'
+        },
+        items: invoiceData.items.map(item => ({
+          name: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price,
+          total: item.product.price * item.quantity
+        })) 
+      };
+     
+      showNotification(
+        "warning",
+        `Mostrando detalles de factura local con código: ${billNumber}`
+      );
+      return;
+    }
+   
+    
+    try {
+      const response = await axios.get(
+        `https://api-sandbox.factus.com.co/v1/bills/show/${billNumber}`, 
+        { headers: { Authorization: `Bearer ${token} `} }
+      );
+     
+      if (response.data && response.data.status === "OK") {
+        invoiceDetails.value = {
+          ...response.data.data,
+          local_invoice_id: invoiceData._id,
+          local_created_at: invoiceData.createdAt
+        };
+       
+        console.log("Detalles de factura API cargados:", invoiceDetails.value);
+      } else {
+        throw new Error("No se pudieron cargar los detalles de la factura");
+      }
+    } catch (apiError) {
+      console.error("Error al cargar desde API:", apiError);
+      throw apiError;
+    }
+  } catch (error) {
+    console.error("Error general al cargar detalles de factura:", error);
+   
+    showNotification(
+      "negative",
+      `Error al cargar detalles: ${error.message}` || "Error desconocido"
+    );
+  } finally {
+    hideLoading();
+  }
+};
+
 </script>
 
 <style scoped>
