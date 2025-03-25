@@ -167,7 +167,7 @@
     </q-dialog>
     
     <!-- Modal para Crear/Validar Factura -->
-    <q-dialog v-model="showCreateModal" persistent maximized>
+    <q-dialog v-model="showCreateModal" persistent maximized color="primary">
       <q-card class="column">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Crear y Validar Factura</div>
@@ -564,29 +564,52 @@ const loadApiInvoices = async () => {
       throw new Error('No se encontró token de autenticación');
     }
 
-    const response = await axios.get(
-      "https://api-sandbox.factus.com.co/v1/bills?filter[identification]&filter[names]&filter[number]&filter[prefix]&filter[reference_code]&filter[status]",
-      {
-        headers: {
-          "Authorization": `Bearer ${token}`
+    let allInvoices = [];
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages) {
+      const response = await axios.get(
+        `https://api-sandbox.factus.com.co/v1/bills`, 
+        {
+          params: {
+            page: page,
+            per_page: 100, // Aumenta el número de facturas por página
+            filter: {
+              identification: '',
+              names: '',
+              number: '',
+              prefix: '',
+              reference_code: '',
+              status: ''
+            }
+          },
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         }
+      );
+    
+      if (response.data && response.data.data && response.data.data.data) {
+        allInvoices = [...allInvoices, ...response.data.data.data.map(invoice => ({
+          ...invoice,
+          isApi: true
+        }))];
+
+        // Actualiza el número total de páginas
+        totalPages = response.data.data.last_page || 1;
+        page++;
+      } else {
+        break;
       }
-    );
-    
-    if (response.data && response.data.data && response.data.data.data) {
-      rows.value = response.data.data.data.map(invoice => ({
-        ...invoice,
-        isApi: true
-      }));
-      console.log("Facturas de API cargadas:", rows.value);
-      return rows.value;
     }
-    
-    return [];
+
+    rows.value = allInvoices;
+    console.log("Todas las facturas de API cargadas:", rows.value);
+    return rows.value;
   } catch (error) {
     console.error("Error al cargar facturas de API:", error);
     showNotification('negative', 'Error al cargar facturas de API');
-    
     return [];
   } finally {
     loading.value = false;

@@ -8,13 +8,13 @@
       <template v-slot:top>
         <div class="contenedorCabeza">
           <div class="text-h6">Listado de Productos</div>
-          <div id="btnCrearProductos"><q-btn color="primary" label="Crear Producto" @click="openProductModal"
+          <div id="btnCrearProductos"><q-btn icon="add" color="primary" label="Producto" @click="openProductModal"
               class="btn-primary" /></div>
         </div>
       </template>
       <!-- Acciones personalizadas -->
       <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
+        <q-td :props="props" class="opcionesProductos">
           <q-btn icon="edit" flat dense color="primary" @click="editProduct(props.row)" class="q-mr-xs" />
           <q-btn icon="delete" flat dense color="negative" @click="deleteProduct(props.row._id)" class="q-mr-xs" />
         </q-td>
@@ -29,7 +29,7 @@
         </q-card-section>
 
         <q-card-section>
-          <q-form ref="productForm" @submit.prevent="submitProduct" class="q-gutter-md">
+          <q-form ref="productForm" @submit.prevent="submitProduct" class="q-gutter-md" color="primary">
             <q-input v-model="product.codeReference" label="Código de Referencia" outlined required
               :rules="[val => !!val || 'El código de referencia es requerido']" />
             <q-input v-model="product.name" label="Nombre" outlined required
@@ -38,13 +38,21 @@
               :rules="[val => val > 0 || 'El precio debe ser mayor a 0']" />
             <q-input v-model.number="product.taxRate" type="number" label="Impuesto (%)" outlined required
               :rules="[val => val >= 0 || 'El impuesto no puede ser negativo']" />
-            <q-select v-model="product.unitMeasureId" :options="unitMeasureOptions" label="Unidad de Medida" outlined
+
+             <q-select dark v-model="product.unitMeasureId" :options="unitMeasureOptions" label="Unidad de Medida" 
               required :rules="[val => !!val || 'Seleccione una unidad de medida']" @filter="filterUnitMeasures"
-              use-input input-debounce="300" option-value="id" option-label="name" map-options />
-            <q-select v-model="product.standardCodeId" :options="standardCodeOptions" label="Código Estándar" outlined
+              use-input input-debounce="300" option-value="id" option-label="name" map-options outlined/> 
+
+              
+
+
+
+
+
+            <q-select dark v-model="product.standardCodeId" :options="standardCodeOptions" label="Código Estándar" outlined
               required :rules="[val => !!val || 'Seleccione un código estándar']" option-value="value"
               option-label="label" map-options />
-            <q-select v-model="product.tributeId" :options="tributeOptions" label="Tributo" outlined required
+            <q-select dark v-model="product.tributeId" :options="tributeOptions" label="Tributo" outlined required
               :rules="[val => !!val || 'Seleccione un tributo']" @filter="filterTributes" use-input input-debounce="300"
               option-value="id" option-label="name" map-options />
           </q-form>
@@ -139,16 +147,8 @@ onMounted(async () => {
 async function loadInitialUnitMeasures() {
   try {
     const response = await apiCliente.get('/v1/measurement-units')
-    if (response && response.data && response.data.data) {
-      unitMeasureOptions.value = response.data.data.map(unit => ({
-        id: unit.id,
-        name: unit.name,
-        value: unit.id,
-        label: unit.name
-      }))
-    } else {
-      console.error('Formato de respuesta inesperado:', response)
-    }
+    unitMeasureOptions.value = response.data.data
+    console.log(response.data.data)
   } catch (error) {
     console.error('Error al cargar unidades de medida:', error)
   }
@@ -387,5 +387,21 @@ div.q-page-container {
   justify-content: space-around;
   align-content: center;
   width: 100%;
+}
+
+.opcionesProductos {
+  display: flex;
+  justify-content: center;
+}
+
+.contenedorProductos {
+  display: flex;
+  justify-content: center;
+}
+.q-menu .q-item {
+  color: black !important;
+}
+.q-menu {
+  background-color: white !important;
 }
 </style>

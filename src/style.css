@@ -65,6 +65,31 @@ button:focus-visible {
   text-align: center;
 }
 
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid rgba(0,0,0,0.24);
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+  color: rgba(0,0,0,0.87);
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+/* Estilos adicionales para mejorar la apariencia */
+select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25,118,210,0.2);
+}
+
+select:hover {
+  border-color: rgba(0,0,0,0.45);
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: #ffffff;
