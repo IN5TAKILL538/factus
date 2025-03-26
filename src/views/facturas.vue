@@ -18,6 +18,7 @@
         <div class="contenedorCabeza"><div class="text-h6">Listado de Facturas</div>     
       <q-btn color="primary" label="Factura" @click="openCreateModal" class="q-ml-sm" icon="add"/>
      
+      <q-btn color="primary" @click="toggleApiInvoices"><i class="fas fa-exchange-alt"></i> <!-- Icono de "exchange" --></q-btn>
       
         <q-btn  color="primary" label="Actualizar" @click="dataFacturas" class="q-ml-sm" icon="refresh" />
       
@@ -64,7 +65,7 @@
 
 
 
-<q-dialog
+    <q-dialog
   v-model="showInvoiceDetailsModal"
   persistent
   maximized
@@ -172,7 +173,7 @@
                       v-if="selectedInvoice.setpNumber" 
                       class="text-caption text-grey-7 q-ml-sm"
                     >
-                      (Ref: {{ selectedInvoice.setpNumber }})
+                      (Ref: {{ selectedInvoice.setpNumber }} )
                     </span>
                   </q-item-section>
                 </q-item>
@@ -398,87 +399,41 @@
         </div>
       </div>
 
-      <!-- Products/Services Table -->
-      <q-card flat bordered class="q-mt-md shadow-1">
-        <q-card-section>
-          <div class="text-h6 text-primary q-mb-sm flex items-center">
-            <q-icon name="inventory_2" class="q-mr-sm" />
-            Productos/Servicios
-          </div>
-          <q-table
-            :rows="
-              invoiceDetails?.items || 
-              selectedInvoice.items || 
-              []
-            "
-            :columns="[
-              { name: 'name', label: 'Producto', align: 'left', field: 'name' },
-              { name: 'quantity', label: 'Cantidad', align: 'center', field: 'quantity' },
-              { 
-                name: 'price', 
-                label: 'Precio Unitario', 
-                align: 'right', 
-                field: 'price', 
-                format: val => formatCurrency(val) 
-              },
-              { 
-                name: 'total', 
-                label: 'Total', 
-                align: 'right', 
-                field: 'total', 
-                format: val => formatCurrency(val) 
-              }
-            ]"
-            row-key="name"
-            flat
-            dense
-            hide-pagination
-          />
-        </q-card-section>
-      </q-card>
-
       <!-- QR Code Section -->
-           <!-- QR Code -->
-           <div
-            class="row justify-center q-mt-md"
-            v-if="
-              (selectedInvoice.isApi &&
-                (invoiceDetails?.bill?.qr_image || invoiceDetails?.bill?.qr)) ||
-              selectedInvoice.qrImage ||
-              selectedInvoice.qr
-            "
-          >
-            <div class="col-12 col-sm-6 col-md-4">
-              <q-card flat bordered class="text-center">
-                <q-card-section>
-                  <div class="text-h6 text-primary">
-                    <q-icon name="qr_code" class="q-mr-sm" />
-                    Código QR
-                  </div>
+      <div
+        class="row justify-center q-mt-md"
+        v-if="(selectedInvoice.isApi && (invoiceDetails?.bill?.qr_image || invoiceDetails?.bill?.qr)) || selectedInvoice.qrImage || selectedInvoice.qr"
+      >
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="text-center">
+            <q-card-section>
+              <div class="text-h6 text-primary">
+                <q-icon name="qr_code" class="q-mr-sm" />
+                Código QR
+              </div>
 
-                  <q-separator class="q-my-sm" />
+              <q-separator class="q-my-sm" />
 
-                  <div class="flex flex-center q-pa-md">
-                    <img
-                      :src="
-                        invoiceDetails?.bill?.qr_image ||
-                        invoiceDetails?.bill?.qr ||
-                        selectedInvoice.qrImage ||
-                        selectedInvoice.qr
-                      "
-                      alt="Código QR de Factura"
-                      class="q-mt-sm qr-image"
-                    />
-                  </div>
-                  <div class="text-caption q-mt-sm text-grey-7">
-                    Escanee para verificar la factura
-                  </div>
-                </q-card-section>
-              </q-card>
-            </div>
-          </div>
-        </q-card-section>
-
+              <div class="flex flex-center q-pa-md">
+                <img
+                  :src="
+                    invoiceDetails?.bill?.qr_image ||
+                    invoiceDetails?.bill?.qr ||
+                    selectedInvoice.qrImage ||
+                    selectedInvoice.qr
+                  "
+                  alt="Código QR de Factura"
+                  class="q-mt-sm qr-image"
+                />
+              </div>
+              <div class="text-caption q-mt-sm text-grey-7">
+                Escanee para verificar la factura
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+    </q-card-section>
     <!-- Dialog Actions -->
     <q-card-actions align="right" class="bg-grey-2 q-pa-md">
       <q-btn 
@@ -507,6 +462,7 @@
     </q-card-actions>
   </q-card>
 </q-dialog>
+
 
 
 
@@ -918,7 +874,7 @@ const loadApiInvoices = async () => {
 
     let allInvoices = [];
     let page = 1;
-    let totalPages = 1;
+    let totalPages = 10;
 
     while (page <= totalPages) {
       const response = await axios.get(
@@ -1019,6 +975,8 @@ const openInvoiceInBrowser = (invoice) => {
 
 const downloadInvoicePdf = async (invoice) => {
   if (invoice && invoice.number) {
+    console.log("base 64 ", invoice);
+    
     try {
       const token = store.token || localStorage.getItem('token');
       if (!token) {
@@ -1028,26 +986,48 @@ const downloadInvoicePdf = async (invoice) => {
       // Mostrar indicador de carga
       showLoading('Descargando factura...');
 
-      // Solicitar PDF
+      // Solicitar PDF en formato Base64
       const response = await axios.get(
         `https://api-sandbox.factus.com.co/v1/bills/download-pdf/${invoice.number}`,
         {
           headers: {
             "Authorization": `Bearer ${token}`
-          },
-          responseType: 'blob'
+          }
         }
-      );
+      );console.log("base 64 ", response);
+
+      // Suponemos que la respuesta viene en formato Base64
+      const base64Pdf = response.data.base64; // Cambia esto según la estructura de la respuesta
+
+      if (!base64Pdf) {
+        throw new Error('No se encontró el PDF en la respuesta');
+      }
+
+      // Convertir Base64 a Blob
+      const byteCharacters = atob(base64Pdf);  // Decodificar Base64
+      const byteArrays = [];
+
+      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+        const slice = byteCharacters.slice(offset, offset + 1024);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+
+      const pdfBlob = new Blob(byteArrays, { type: 'application/pdf' });
 
       // Crear objeto URL y descargar
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `Factura-${invoice.number}.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+    
       showNotification('positive', 'Factura descargada correctamente');
     } catch (error) {
       console.error("Error al descargar factura:", error);
@@ -1059,7 +1039,6 @@ const downloadInvoicePdf = async (invoice) => {
     showNotification('negative', 'No se pudo descargar la factura. Número de factura no disponible.');
   }
 };
-
 // Métodos para manejo del formulario
 const openCreateModal = () => {
   const refCode = "F" + Math.floor(Math.random() * 10000);
