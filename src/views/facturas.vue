@@ -678,8 +678,8 @@
                   />
                 </div>
               </div>
-              
-              <div class="q-mt-sm">
+              <div class="contenedorbtns">
+              <div class="q-mt-sm" id="btnAgregarproductos">
                 <q-btn 
                   type="button" 
                   color="secondary" 
@@ -689,7 +689,7 @@
                   @click="addItem" 
                 />
               </div>
-            </div>
+            
             
             <div class="q-gutter-sm">
               
@@ -700,6 +700,8 @@
                 @click="validateInvoice"
                 :disable="!invoice.customerId || invoice.items.some(item => !item.productId || item.quantity <= 0)"
               />
+            </div>
+            </div>
             </div>
           </q-form>
           
@@ -1467,6 +1469,24 @@ div.q-page-container{
   align-content: center;
   width: 100%;
 
+}
+.colum{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.text-subtitle1{
+text-align: center;
+}
+.contenedorbtns{
+  display: flex;
+
+  align-items: center;
+  flex-direction: column;
+}
+#btnAgregarproductos{
+  margin: 20px;
 }
 
 </style>

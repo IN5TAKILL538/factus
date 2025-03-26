@@ -25,10 +25,10 @@
     <q-dialog v-model="productModal" persistent maximized color="primary">
   <q-card style="min-width: 500px">
     <q-card-section>
-      <div class="text-h6">{{ isEditing ? 'Editar' : 'Crear' }} Producto</div>
+      <div class="text-h6">{{ isEditing ? 'Editar' : 'Crear' }} Producto
       
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="close" flat round dense v-close-popup /></div>
     </q-card-section>
 
     <q-card-section>
@@ -468,6 +468,14 @@ div.q-page-container {
 .contenedorProductos {
   display: flex;
   justify-content: center;
+}
+.text-h6{
+  display: flex;
+  flex-direction: row;
+ 
+}
+.text-subtitle1{
+text-align: center;
 }
 
 </style>

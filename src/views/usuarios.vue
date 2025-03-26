@@ -55,149 +55,193 @@
       </q-table>
     </div>
 
-    <!-- User Modal -->
-    <q-dialog v-model="showModal" persistent>
-      <q-card class="w-full max-w-lg mx-auto rounded-lg shadow-xl">
-        <q-card-section class="bg-gray-100 border-b">
-          <div class="text-xl font-semibold text-gray-800">
-            {{ isEditing ? 'Editar' : 'Crear' }} Usuario
+     <q-dialog v-model="showModal" full-width maximized>
+    <q-card class="full-width full-height">
+      <q-card-section class="bg-blue-grey-1 q-pa-md">
+        <div class="text-h5 text-weight-bold text-blue-grey-8">
+          {{ isEditing ? 'Editar' : 'Crear' }} Usuario para Facturación
+            <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </div>
+      </q-card-section>
+
+      <q-card-section class="q-pa-md">
+        <q-form @submit.prevent="submitUser">
+          <div class="row q-col-gutter-md">
+            <!-- Información Personal -->
+            <div class="col-12 col-md-6">
+              <q-card flat bordered class="full-height">
+                <q-card-section>
+                  <div class="text-subtitle1 text-weight-medium q-mb-md">Información Personal</div>
+                  
+                  <div class="row q-col-gutter-md">
+                    <!-- Tipo de Documento y Número -->
+                    <div class="col-12 col-md-6">
+                      <q-select
+                        v-model="user.identificationDocumentId"
+                        :options="identificationDocuments"
+                        option-value="id"
+                        option-label="name"
+                        label="Tipo de Documento"
+                        outlined
+                        emit-value
+                        map-options
+                        required
+                        :rules="[val => !!val || 'Seleccione un tipo de documento']"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-input 
+                        v-model="user.identification" 
+                        label="Número de Identificación" 
+                        outlined 
+                        required 
+                        :rules="[val => !!val || 'Número de identificación requerido']"
+                      />
+                    </div>
+
+                    <!-- Nombre Completo -->
+                    <div class="col-12">
+                      <q-input 
+                        v-model="user.names" 
+                        label="Nombre Completo" 
+                        outlined 
+                        required
+                        :rules="[val => !!val || 'Nombre completo requerido']"
+                      />
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="col-12 col-md-6">
+                      <q-input 
+                        v-model="user.email" 
+                        type="email" 
+                        label="Correo Electrónico" 
+                        outlined 
+                        required
+                        :rules="[val => !!val || 'Correo electrónico requerido']"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-input 
+                        v-model="user.phone" 
+                        label="Teléfono" 
+                        outlined 
+                        required
+                        :rules="[val => !!val || 'Teléfono requerido']"
+                      />
+                    </div>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
+
+            <!-- Información de Facturación -->
+            <div class="col-12 col-md-6">
+              <q-card flat bordered class="full-height">
+                <q-card-section>
+                  <div class="text-subtitle1 text-weight-medium q-mb-md">Información de Facturación</div>
+                  
+                  <div class="row q-col-gutter-md">
+                    <!-- Dirección Completa -->
+                    <div class="col-12">
+                      <q-input 
+                        v-model="user.address" 
+                        label="Dirección Completa" 
+                        outlined 
+                        required
+                        :rules="[val => !!val || 'Dirección requerida']"
+                      />
+                    </div>
+
+                    <!-- Municipio y Departamento -->
+                    <div class="col-12 col-md-6">
+                      <q-select
+                        v-model="user.municipalityId"
+                        :options="municipalities"
+                        option-value="id"
+                        option-label="name"
+                        label="Municipio"
+                        outlined
+                        use-input
+                        input-debounce="300"
+                        @filter="filterMunicipalities"
+                        emit-value
+                        map-options
+                        :loading="municipalities.length === 0"
+                        required
+                        :rules="[val => !!val || 'Municipio requerido']"
+                      >
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              No se encontraron resultados
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-select
+                        v-model="user.departmentId"
+                        :options="departments"
+                        option-value="id"
+                        option-label="name"
+                        label="Departamento"
+                        outlined
+                        emit-value
+                        map-options
+                        required
+                        :rules="[val => !!val || 'Departamento requerido']"
+                      />
+                    </div>
+
+                    <!-- Información Tributaria -->
+                    <div class="col-12 col-md-6">
+                      <q-select
+                        v-model="user.taxRegime"
+                        :options="taxRegimes"
+                        label="Régimen Tributario"
+                        outlined
+                        required
+                        :rules="[val => !!val || 'Régimen tributario requerido']"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-input 
+                        v-model="user.taxIdentificationNumber" 
+                        label="NIT" 
+                        outlined 
+                        required
+                        :rules="[val => !!val || 'NIT requerido']"
+                      />
+                    </div>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
           </div>
-        </q-card-section>
+        </q-form>
+      </q-card-section>
 
-        <q-card-section class="p-6">
-          <q-form @submit.prevent="submitUser" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Identificación y DV en la misma fila -->
-            <div class="col-span-1">
-              <q-input 
-                v-model="user.identification" 
-                label="Identificación" 
-                outlined 
-                required 
-                :rules="[val => !!val || 'La identificación es requerida']"
-                class="w-full"
-              />
-            </div>
-            <div class="col-span-1">
-              <q-input 
-                v-model="user.dv" 
-                label="DV" 
-                outlined 
-                class="w-full"
-              />
-            </div>
-
-            <!-- Tipo de documento de identidad -->
-            <div class="col-span-1">
-              <q-select
-                v-model="user.identificationDocumentId"
-                :options="identificationDocuments"
-                option-value="id"
-                option-label="name"
-                label="Tipo de Documento"
-                outlined
-                emit-value
-                map-options
-                class="w-full"
-              />
-            </div>
-            
-            <!-- Nombre en fila completa -->
-            <div class="col-span-2">
-              <q-input 
-                v-model="user.names" 
-                label="Nombre" 
-                outlined 
-                required
-                :rules="[val => !!val || 'El nombre es requerido']"
-                class="w-full"
-              />
-            </div>
-
-            <!-- Correo y teléfono en la misma fila -->
-            <div class="col-span-1">
-              <q-input 
-                v-model="user.email" 
-                type="email" 
-                label="Correo" 
-                outlined 
-                required
-                :rules="[val => !!val || 'El correo es requerido']"
-                class="w-full"
-              />
-            </div>
-            <div class="col-span-1">
-              <q-input 
-                v-model="user.phone" 
-                label="Teléfono" 
-                outlined 
-                required
-                :rules="[val => !!val || 'El teléfono es requerido']"
-                class="w-full"
-              />
-            </div>
-
-            <!-- Dirección en fila completa -->
-            <div class="col-span-2">
-              <q-input 
-                v-model="user.address" 
-                label="Dirección" 
-                outlined 
-                required
-                :rules="[val => !!val || 'La dirección es requerida']"
-                class="w-full"
-              />
-            </div>
-
-            <!-- Municipio con autocompletado -->
-            <div class="col-span-2">
-              <q-select
-  v-model="user.municipalityId"
-  :options="municipalities"
-  option-value="id"
-  option-label="name"
-  label="Municipio"
-  outlined
-  use-input
-  input-debounce="300"
-  @filter="filterMunicipalities"
-  emit-value
-  map-options
-  :loading="municipalities.length === 0"
-  required
-  :rules="[val => !!val || 'El municipio es requerido']"
-  class="w-full"
->
-  <template v-slot:no-option>
-    <q-item>
-      <q-item-section class="text-grey">
-        No se encontraron resultados
-      </q-item-section>
-    </q-item>
-  </template>
-</q-select>
-    
-            </div>
-          </q-form>
-        </q-card-section>
-
-        <q-card-actions align="right" class="bg-gray-100 p-4 border-t">
-          <q-btn 
-            flat 
-            label="Cancelar" 
-            color="negative" 
-            v-close-popup 
-            @click="closeModal"
-            class="mr-2"
-          />
-          <q-btn 
-            color="primary" 
-            :label="isEditing ? 'Actualizar' : 'Guardar'" 
-            type="submit"
-            @click="submitUser"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+      <q-card-actions align="right" class="bg-grey-2 q-pa-md">
+        <q-btn 
+          flat 
+          label="Cancelar" 
+          color="negative" 
+          v-close-popup 
+          @click="closeModal"
+          class="mr-2"
+        />
+        <q-btn 
+          color="primary" 
+          :label="isEditing ? 'Actualizar' : 'Guardar'" 
+          type="submit"
+          @click="submitUser"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   </div>
 </template>
 
@@ -497,5 +541,16 @@ div.q-page-container{
   align-content: center;
   width: 100%;
 
+}
+.full-height {
+  height: 100%;
+}
+.text-h5{
+  display: flex;
+  flex-direction: row;
+ 
+}
+.text-subtitle1{
+text-align: center;
 }
 </style>
