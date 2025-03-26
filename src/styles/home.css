@@ -102,3 +102,6 @@
   border-radius: 50%;
   border: 3px solid var(--text-color-light);
 }
+#q-app{
+height: 100%;
+}
