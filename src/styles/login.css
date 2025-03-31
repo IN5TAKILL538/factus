@@ -17,7 +17,7 @@
     
     border-radius: 50px;
     flex-direction: row;
-    background: linear-gradient(90deg, #1d8fec, #000000);
+    background: white;
     font-family: Georgia, "Times New Roman", Times, serif;
     justify-content: center;
     align-items: center;
@@ -39,7 +39,7 @@ body{
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    background: linear-gradient(45deg, #1d8fec, #000000);
+    background:  white;
     height: 100vh;
     width: 100%;
 }
@@ -63,7 +63,7 @@ footer {
     background-image: url(../assets/fondo.jpeg);
     background-size: cover;
     background-position: center;
-    width: 500px;
+    width: 50%;
     color: white;
     height: 497px;
     text-align: center;
@@ -71,6 +71,7 @@ footer {
     font-weight: bold;
     border-top-left-radius: 50px;
    border-bottom-left-radius: 50px; 
+
 }
 
 
@@ -297,4 +298,9 @@ input:hover {
 }
 #app{
     width: 100%;
+}
+#forma1{ 
+    background-color: white;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px; 
 }

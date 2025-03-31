@@ -181,26 +181,15 @@
                         </template>
                       </q-select>
                     </div>
-                    <div class="col-12 col-md-6">
-                      <q-select
-                        v-model="user.departmentId"
-                        :options="departments"
-                        option-value="id"
-                        option-label="name"
-                        label="Departamento"
-                        outlined
-                        emit-value
-                        map-options
-                        required
-                        :rules="[val => !!val || 'Departamento requerido']"
-                      />
-                    </div>
+                 
 
                     <!-- Información Tributaria -->
                     <div class="col-12 col-md-6">
                       <q-select
-                        v-model="user.taxRegime"
-                        :options="taxRegimes"
+                        v-model="user.tributeId"
+                        :options="tributes"
+                        option-value="id"
+                        option-label="name"
                         label="Régimen Tributario"
                         outlined
                         required
@@ -309,6 +298,7 @@ const identificationDocuments = ref([
 
 // Municipalities data
 const municipalities = ref([]);
+const tributes = ref([]);
 const municipalitiesFilter = ref('');
 
 // User state
@@ -335,6 +325,7 @@ const currentUserId = ref(null);
 onMounted(async () => {
   await fetchUsers();
   await loadInitialMunicipalities();
+  await loadInitialTributes()
 });
 
 // Función loadInitialMunicipalities (corregida)
@@ -360,6 +351,28 @@ async function loadInitialMunicipalities() {
   }
 }
 
+async function loadInitialTributes() {
+  try {
+    const response = await apiCliente.get('v1/tributes/products');
+    // Comprueba si la respuesta tiene la estructura esperada
+    console.log("Respuesta tributos:", response.data);
+    
+    // Asegúrate de acceder correctamente a los datos
+    const rawData2 = response.data.data || [];
+    console.log(rawData2,"tributos")
+    // Mapeo correcto de propiedades
+    tributes.value = rawData2.map(mun => ({
+      id: mun.id,
+      name: mun.name,
+      
+    }));
+    
+    console.log("tributes cargados:", tributes.value);
+  } catch (error) {
+    console.error("Error cargando tributos:", error);
+    showNotification('negative', 'Error cargando Tributos');
+  }
+}
 // Función filterMunicipalities (corregida)
 function filterMunicipalities(val, update) {
   if (val === '') {

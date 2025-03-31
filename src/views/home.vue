@@ -1,11 +1,11 @@
 
 <template>
   <q-layout view="hHh LpR fFf" class="padre">
-    <q-header class="bg-primary text-white" height-hint="98">
-      <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+    <q-header class="bg-primary text-white" height-hint="98" >
+      <q-toolbar flat class="headerBar">
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"  />
 
-        <q-toolbar-title>
+        <q-toolbar-title >
           <q-avatar>
             <img src="../assets/logo.jpeg" />
           </q-avatar>
@@ -20,20 +20,21 @@
       side="left"
       behavior="desktop"
       class="no-scroll"
+      bordered
     >
       <div class="menuLink">
-        <div><h1 class="titletext">APPtura</h1></div>
-        <button class="buttonLink" @click="menuOff()">
+       
+        <button class="buttonLink" @click="menuOff()" color="primary" >
           <router-link to="/facturas"
-            ><span class="textButtonLink">Facturas</span></router-link
+            ><span class="textButtonLink" icon="">Facturas</span></router-link
           >
         </button>
-        <button class="buttonLink" @click="menuOff()">
+        <button class="buttonLink" @click="menuOff()" color="primary">
           <router-link to="/clientes"
             ><span class="textButtonLink">Clientes</span></router-link
           >
         </button>
-        <button class="buttonLink" @click="menuOff()">
+        <button class="buttonLink" @click="menuOff()" color="primary">
           <router-link to="/productos"
             ><span class="textButtonLink">Productos</span></router-link
           >
@@ -54,6 +55,7 @@
 </template>
   
 <script setup>
+
 import { ref } from "vue";
 import { useRouter } from "vue-router"; // <-- Agrega esta línea
 

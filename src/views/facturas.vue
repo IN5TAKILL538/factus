@@ -3,14 +3,17 @@
 
     
     <q-table 
-      style="width: 1000px; "
+      style="width: 1000px; max-height: 1200px; "
       flat 
       bordered 
       :rows="filteredInvoices" 
       :columns="columns" 
       row-key="_id"
       :loading="loading"
-   
+      :pagination="pagination"
+    
+
+  
 
     >
       <template v-slot:top>
@@ -56,6 +59,7 @@
           />
         </q-td>
       </template>
+      
     </q-table>
     
 
@@ -737,6 +741,10 @@ import apiClienteFactus from '../plugins/factus.js';
 import axios from 'axios';
 import { useAuthStore } from '../store/store.js';
 
+const pagination= {
+        page: 1,
+        rowsPerPage: 5
+      }
 // Crear sistema de notificación personalizado
 const notification = ref({
   show: false,
@@ -778,7 +786,7 @@ const store = useAuthStore();
 // Control de visualización de facturas API
 const showApiInvoices = ref(true);
 // Control para el estado de validación de la factura
-const isInvoiceValidated = ref(false);
+const isInvoiceValidated = ref(true);
 
 // Datos de tabla
 const columns = ref([
@@ -928,7 +936,7 @@ const loadApiInvoices = async () => {
         {
           params: {
             page: page,
-            per_page: 10, // Aumenta el número de facturas por página
+            per_page: 100, // Aumenta el número de facturas por página
             filter: {
               identification: '',
               names: '',
@@ -978,6 +986,7 @@ const dataFacturas = async () => {
     
     // Cargar facturas de API
     await loadApiInvoices();
+    await loadLocalInvoices();
   } catch (error) {
     console.error("Error al cargar facturas:", error);
     showNotification('negative', 'Error al cargar facturas');
